@@ -1,0 +1,36 @@
+{
+  "name": "parcel-react-example",
+  "license": "MIT",
+  "scripts": {
+    "start": "cross-env NODE_ENV=development parcel src/index.html ",
+    "build": "cross-env NODE_ENV=development parcel build src/index.html --no-minify --public-url /"
+  },
+  "dependencies": {
+    "@material-ui/core": "^4.11.0",
+    "autoprefixer": "^7.2.1",
+    "babel-preset-react-app": "^3.1.0",
+    "fbjs": "^2.0.0",
+    "parcel-bundler": "latest",
+    "react": "16.13.0",
+    "react-dom": "16.13.0",
+    "three": "^0.120.0"
+  },
+  "postcss": {
+    "modules": false,
+    "plugins": {
+      "autoprefixer": {
+        "browsers": [
+          ">1%",
+          "last 4 versions",
+          "Firefox ESR",
+          "not ie < 9"
+        ],
+        "flexbox": "no-2009"
+      }
+    }
+  },
+  "devDependencies": {
+    "babel-runtime": "^6.26.0",
+    "cross-env": "^7.0.2"
+  }
+}
