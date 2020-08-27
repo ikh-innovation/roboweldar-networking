@@ -66,7 +66,7 @@ export default class TabsPanel extends React.Component {
       tabIndex: 0,
       imagePaths: []
     }
-    this.ar = new Augmented();
+    this.ar = new Augmented( 'obj-mesh' );
     
     properties.wsCli.overloadOnMessage( ( message ) => {
       console.log(message)
