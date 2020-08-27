@@ -1,5 +1,8 @@
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
+
+import SlideShow from 'react-image-show';
+
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
@@ -9,6 +12,7 @@ import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 
 import Augmented from './Augmented.js';
+import HTTPWrapper from './HTTPWrapper.js';
 
 function reconstructionStatus( value ) {
   return (
@@ -59,9 +63,44 @@ export default class TabsPanel extends React.Component {
     this.hostname = properties.hostname;
     this.state = {
       value: 0,
-      tabIndex: 0
+      tabIndex: 0,
+      imagePaths: []
     }
+    this.fetchImageNames();
     this.ar = new Augmented();
+  }
+  
+  fetchImageNames() {
+    HTTPWrapper.fetchURL( 
+      'http://localhost:3000/image_names',
+      ( response ) => {
+        if ( response.status === 200 )
+          response.json().then( ( imageNames ) => {
+            const paths =
+              imageNames.map( ( name ) => {
+                return `http://localhost:3000/serve_image?imageName=${ name }`
+              });
+            this.setState({
+              imagePaths: paths
+            })
+          })
+      }
+    )    
+  }
+  
+  renderImages() {
+    return(
+      <SlideShow
+          images={this.state.imagePaths}
+          width="920px"
+          imagesWidth="800px"
+          imagesHeight="450px"
+          imagesHeightMobile="56vw"
+          thumbnailsWidth="920px"
+          thumbnailsHeight="12vw"
+          indicators thumbnails fixedImagesHeight
+       />
+     )
   }
   
   handleChange( event, newValue ) {
@@ -97,6 +136,7 @@ export default class TabsPanel extends React.Component {
           </Box>
           ) 
         }
+        {this.renderImages()}
       </div>
     );
   }
