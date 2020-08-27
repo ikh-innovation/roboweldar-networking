@@ -153,14 +153,12 @@ export default class TabsPanel extends React.Component {
           <Box >
             { reconstructionButtons( args.hostname ) }
             { reconstructionStatus() }
-            { this.ar.showObj( true ) }
           </Box>
           ) 
         }
         { this.state.tabIndex !== 0 && 
           (
           <Box >
-            { this.ar.showObj( false ) }
           </Box>
           ) 
         }

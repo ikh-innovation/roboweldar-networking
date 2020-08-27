@@ -4,9 +4,6 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 export default class Augmented {
   constructor( properties ) {
-    this.canvas = document.getElementById( 'obj-mesh' );
-    console.log(this.canvas)
-    
     this.initThree();
   }
   
@@ -34,11 +31,7 @@ export default class Augmented {
     this.camera.add( pointLight );
     animate();
   }
-  
-  showObj( show ) {
-    this.canvas.style.visibility = (show)? 'visible': 'hidden';
-  }
-  
+    
   loadObj( objPath ) {
     console.log(objPath);
     const loader = new OBJLoader();
