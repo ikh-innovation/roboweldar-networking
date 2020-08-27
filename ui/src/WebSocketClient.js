@@ -5,13 +5,18 @@ export default class WebSocketClient {
     this.setEvents();
   }
   
+  /* gets overloaded in TabsPanel */
+  overloadOnMessage( onMessage ) {
+    this.webSocket.onmessage = onMessage;
+  }
+  
   setEvents() {
     this.webSocket.onopen = ( e ) => {
       
     };
-    this.webSocket.onmessage = ( data ) => {
-      
-      console.log( data );
+    this.webSocket.onmessage = ( message ) => {
+      console.log(message)
+      const parsed = JSON.parse(message.data);
     };
   }
 }

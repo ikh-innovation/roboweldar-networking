@@ -1,4 +1,5 @@
 import * as Three from 'three';
+import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
 
 export default class Augmented {
   constructor( properties ) {

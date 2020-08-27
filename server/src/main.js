@@ -20,17 +20,35 @@ function runMe() {
     if (wsServer.photoCaptureClient) 
       wsServer.sendWSClient( wsServer.photoCaptureClient, 'init' );
     if (clients) clients.forEach( ( client ) => { 
-      if ( client.path === 'ui' ) wsServer.sendWSClient( client, "{ 'message': 'photo cap init' }")
+      if ( client.path === 'ui' ) wsServer.sendWSClient( client, "{ 'message': 'pc_init' }")
     } );
   });
   httpServer.photoCaptureComplete( ( req, res ) => {
     if (wsServer.SfMClient) 
       wsServer.sendWSClient( wsServer.SfMClient, 'init' );
     if (clients) clients.forEach( ( client ) => { 
-      if ( client.path === 'ui' ) wsServer.sendWSClient( client, "{ 'message': 'photo cap complete' }")
+      if ( client.path === 'ui' ) 
+        wsServer.sendWSClient( 
+          client,
+          JSON.stringify( 
+            { message: 'pc_complete' }
+          )
+        )
     } );
   } );
 
+  httpServer.cachePointCloud( ( req, res ) => {
+    if (clients) clients.forEach( ( client ) => { 
+      if ( client.path === 'ui' ) 
+        wsServer.sendWSClient( 
+          client,
+          JSON.stringify( 
+            { message: 'sfm_complete' }
+          )
+        )
+    });
+  })
+  
   logger.success( `WebSocket server initialized, port: ${wsProperties.port}` );
   logger.success( `HTTP server initialized, port: ${httpProperties.port}` );
 }

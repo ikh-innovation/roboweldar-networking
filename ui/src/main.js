@@ -6,8 +6,10 @@ import TabsPanel  from './TabsPanel.js';
 import WebSocketClient from './WebSocketClient.js';
 
 
-let aa = new WebSocketClient( { hostname: 'localhost' } );
-ReactDOM.render(<TabsPanel hostname='localhost' />, document.querySelector('#user-panel'));
+let wsC = new WebSocketClient( { hostname: 'localhost' } );
+
+
+ReactDOM.render(<TabsPanel hostname='localhost' wsCli={wsC} />, document.querySelector('#user-panel'));
 
 // Hot Module Replacement
 if (module.hot) {

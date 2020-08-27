@@ -66,8 +66,36 @@ export default class TabsPanel extends React.Component {
       tabIndex: 0,
       imagePaths: []
     }
-    this.fetchImageNames();
     this.ar = new Augmented();
+    
+    properties.wsCli.overloadOnMessage( ( message ) => {
+      console.log(message)
+      const parsed = JSON.parse(message.data);
+      if ( parsed.message === 'pc_complete' ) 
+        this.fetchImageNames()
+      if ( parsed.message === 'sfm_complete' ) 
+        this.fetchMesh()
+    }); 
+    
+  }
+  
+  fetchMesh() {
+    HTTPWrapper.fetchURL( 
+      'http://localhost:3000/serve_point_cloud',
+      ( response ) => {
+        if ( response.status === 200 ) {
+          this.ar.loadObj( "http://localhost:3000/serve_point_cloud" ) 
+        }
+         
+//           const file = open(response.body, 'rb');
+//           response.json().then( ( result ) => {
+//             console.log(result)
+//             this.setState({
+//               mesh: name
+//             })
+//           })
+      }
+    )    
   }
   
   fetchImageNames() {

@@ -14,7 +14,6 @@ class HTTPServer {
   initializeEndpoints() {
     this.getImageNames();
     this.initImageStorage();
-    this.cachePointCloud();
     this.cacheImages();
     this.servePointCloud();
     this.serveImage();
@@ -32,16 +31,6 @@ class HTTPServer {
     );
   }
 
-  /* add try/catch or validation */
-  cachePointCloud() {
-    this.httpApp.post(
-      '/cache_mesh',
-      this.pcUploader.array( 'files' ),
-      ( req, res ) => {
-        res.json( { 'message': 'cache point cloud page hit' } );
-      }
-    );
-  }
 
   initImageStorage() {
     const imageStorage = 
@@ -120,7 +109,17 @@ class HTTPServer {
     );
   }
   
-  
+  /* add try/catch or validation */
+  cachePointCloud( callback ) {
+    this.httpApp.post(
+      '/cache_mesh',
+      this.pcUploader.array( 'files' ),
+      ( req, res ) => {
+        callback( req, res );
+        res.json( { 'message': 'cache point cloud page hit' } );
+      }
+    );
+  }
 }
 
 module.exports.HTTPServer = HTTPServer;
