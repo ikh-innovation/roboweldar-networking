@@ -15,22 +15,11 @@ class HTTPServer {
     this.getImageNames();
     this.initImageStorage();
     this.cacheImages();
-    this.servePointCloud();
+    this.serveObj();
+    this.serveMTL();
     this.serveImage();
     this.httpApp.listen( this.port );
   }
-
-  /* add try/catch or validation */
-  cacheImages() {
-    this.httpApp.post(
-      '/cache_images',
-      this.imageUploader.array( 'files' ),
-      ( req, res ) => {
-        res.json( { 'message': 'cache point cloud page hit' } );
-      }
-    );
-  }
-
 
   initImageStorage() {
     const imageStorage = 
@@ -44,19 +33,56 @@ class HTTPServer {
       multer.diskStorage( {
         destination: './uploads/point_cloud/',
         filename: ( req, file, callback ) => {
-          callback( null, 'mesh.obj' );
+          callback( null, file.originalname );
         }
       } );
     this.imageUploader = multer( { storage: imageStorage } ); 
     this.pcUploader = multer( { storage: pcStorage } ); 
   }
 
-  servePointCloud() {
+  /* add try/catch or validation */
+  cacheImages() {
+    this.httpApp.post(
+      '/cache_images',
+      this.imageUploader.array( 'files' ),
+      ( req, res ) => {
+        res.json( { 'message': 'cache point cloud page hit' } );
+      }
+    );
+  }
+  
+  /* add try/catch or validation */
+  cachePointCloud( callback ) {
+    this.httpApp.post(
+      '/cache_mesh',
+      this.pcUploader.array( 'files' ),
+      ( req, res ) => {
+        callback( req, res );
+        res.json( { 'message': 'cache point cloud page hit' } );
+      }
+    );
+  }
+
+  serveObj() {
     this.httpApp.use( express.static( './uploads' ) );
     this.httpApp.get(
-      '/serve_point_cloud',
+      '/serve_obj',
       ( req, res ) => {
-        res.sendFile( './uploads/point_cloud/mesh.obj', { root: './' } );
+        //         res.setHeader( 'Content-Disposition', 'attachment; filename=mesh.obj' );
+        //         res.sendFile( './uploads/point_cloud/mesh.obj', { root: './' } );
+        res.download( './uploads/point_cloud/mesh.obj' );
+      }
+    );
+  }
+
+  serveMTL() {
+    this.httpApp.use( express.static( './uploads' ) );
+    this.httpApp.get(
+      '/serve_mtl',
+      ( req, res ) => {
+//         res.setHeader( 'Content-Disposition', 'attachment; filename=mesh.mtl' );
+//         res.sendFile( './uploads/point_cloud/mesh.mtl', { root: './' } );
+        res.download( './uploads/point_cloud/mesh.mtl' );
       }
     );
   }
@@ -105,18 +131,6 @@ class HTTPServer {
       ( req, res ) => {
         callback( req, res );
         res.json( { 'message': 'photo_capture_complete page hit' } );
-      }
-    );
-  }
-  
-  /* add try/catch or validation */
-  cachePointCloud( callback ) {
-    this.httpApp.post(
-      '/cache_mesh',
-      this.pcUploader.array( 'files' ),
-      ( req, res ) => {
-        callback( req, res );
-        res.json( { 'message': 'cache point cloud page hit' } );
       }
     );
   }
