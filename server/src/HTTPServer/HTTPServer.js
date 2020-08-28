@@ -104,7 +104,8 @@ class HTTPServer {
   }
   
   serveImage() {
-    this.httpApp.use( express.static( './images' ) );
+    this.httpApp.use( '/images', express.static( './uploads/images' ) );
+    this.httpApp.use( '/point_cloud', express.static( './uploads/point_cloud' ) );
     this.httpApp.get(
       '/serve_image',
       ( req, res ) => {

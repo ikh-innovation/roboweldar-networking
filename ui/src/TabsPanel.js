@@ -14,48 +14,6 @@ import Button from '@material-ui/core/Button';
 import Augmented from './Augmented.js';
 import HTTPWrapper from './HTTPWrapper.js';
 
-function reconstructionStatus( value ) {
-  return (
-   <div> Status : tbd </div> 
-  )
-}
-
-function sendPCStartSignal(hostname) {
-  fetch(
-    `http://${hostname}:3000/initialize_photo_capture`,
-     { 
-        mode: 'cors',
-        headers: {
-          'Access-Control-Allow-Origin': '*'
-        }
-     }
-   );
-}
-
-function reconstructionButtons( hostname ) {
-  return (
-    <Fragment>
-      <div>
-        <Button variant="outlined"
-          color="primary"
-          onClick={ () => { sendPCStartSignal( hostname) } }
-        >
-          Start 3D Reconstruction
-        </Button>
-        <Button variant="outlined" color="secondary">
-          Stop 3D Reconstruction
-        </Button>
-      </div>
-    </Fragment>
-  );
-}
-
-function a11yProps( index ) {
-  return {
-    id: `simple-tab-${ index }`,
-    'aria-controls': `simple-tabpanel-${ index }`,
-  };
-}
 
 export default class TabsPanel extends React.Component {
   constructor( properties ) {
@@ -81,8 +39,8 @@ export default class TabsPanel extends React.Component {
   
   fetchMesh() {
           this.ar.loadObj(
-            "http://localhost:3000/serve_mtl",
-            "http://localhost:3000/serve_obj"
+            "male02.mtl",
+            "male02.obj"
           ) 
   }
   
@@ -178,5 +136,49 @@ export default class TabsPanel extends React.Component {
     ); 
   }
 }
+
+function reconstructionStatus( value ) {
+  return (
+   <div> Status : tbd </div> 
+  )
+}
+
+function sendPCStartSignal(hostname) {
+  fetch(
+    `http://${hostname}:3000/initialize_photo_capture`,
+     { 
+        mode: 'cors',
+        headers: {
+          'Access-Control-Allow-Origin': '*'
+        }
+     }
+   );
+}
+
+function reconstructionButtons( hostname ) {
+  return (
+    <Fragment>
+      <div>
+        <Button variant="outlined"
+          color="primary"
+          onClick={ () => { sendPCStartSignal( hostname) } }
+        >
+          Start 3D Reconstruction
+        </Button>
+        <Button variant="outlined" color="secondary">
+          Stop 3D Reconstruction
+        </Button>
+      </div>
+    </Fragment>
+  );
+}
+
+function a11yProps( index ) {
+  return {
+    id: `simple-tab-${ index }`,
+    'aria-controls': `simple-tabpanel-${ index }`,
+  };
+}
+
 
 
