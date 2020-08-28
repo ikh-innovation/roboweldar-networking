@@ -22,7 +22,7 @@ def sendDummyFiles(endpoint):
   if (endpoint == "cache_images"):
       files = ["image1.jpg", "image2.jpg", "image3.jpg"]
   elif (endpoint == "cache_mesh"):
-      files = ["mesh.obj"]
+      files = ["mesh.obj", "mesh.mtl"]
   http_client.send_images("http://" + host + ":3000/" + endpoint, files)
 
 # obj upload example (mesh)

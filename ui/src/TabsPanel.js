@@ -80,22 +80,10 @@ export default class TabsPanel extends React.Component {
   }
   
   fetchMesh() {
-    HTTPWrapper.fetchURL( 
-      'http://localhost:3000/serve_point_cloud',
-      ( response ) => {
-        if ( response.status === 200 ) {
-          this.ar.loadObj( "http://localhost:3000/serve_point_cloud" ) 
-        }
-         
-//           const file = open(response.body, 'rb');
-//           response.json().then( ( result ) => {
-//             console.log(result)
-//             this.setState({
-//               mesh: name
-//             })
-//           })
-      }
-    )    
+          this.ar.loadObj(
+            "http://localhost:3000/serve_mtl",
+            "http://localhost:3000/serve_obj"
+          ) 
   }
   
   fetchImageNames() {

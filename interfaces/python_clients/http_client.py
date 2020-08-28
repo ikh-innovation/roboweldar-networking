@@ -16,7 +16,6 @@ def getImageNames(link):
   r = requests.get(link)
   if (r.status_code == 200):
     names = json.loads(r.text)
-    #print(r.text)
     return names
   else:
     print( 'request not served correctly', r)

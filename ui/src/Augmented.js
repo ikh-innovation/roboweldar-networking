@@ -1,5 +1,6 @@
 import * as Three from 'three';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
+import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 export default class Augmented {
@@ -32,21 +33,28 @@ export default class Augmented {
     animate();
   }
     
-  loadObj( objPath ) {
-    console.log(objPath);
-    const loader = new OBJLoader();
-    loader.load(
-      objPath,
-      ( object ) => {
-        this.scene.add( object );
-      },
-      ( xhr ) => {
-        onLoadProgress( xhr );
-      },
-      ( error ) => {
-        onLoadError( error );
+  loadObj( mtlPath, objPath ) {
+    const objLoader = new OBJLoader();
+    const mtlLoader = new MTLLoader();
+
+    mtlLoader.load(
+      mtlPath,
+      ( materials ) => {
+         materials.preload();
+         objLoader.load(
+           objPath,
+           ( object ) => {
+             this.scene.add( object );
+           },
+           ( xhr ) => {
+             onLoadProgress( xhr );
+           },
+           ( error ) => {
+             onLoadError( error );
+           }
+         )
       }
-    )
+    );
   }
   
 }
