@@ -89,7 +89,7 @@ class HTTPServer {
   
   getImageNames() {
     this.httpApp.get(
-      '/image_names',
+      '/image_paths',
       ( req, res ) => {
         let fileNames = [];
         fs.readdir( './uploads/images/', ( err, files ) => {

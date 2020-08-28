@@ -31,7 +31,7 @@ def sendMesh(fName):
   http_client.uploadMesh("http://localhost:3000/cache_mesh", fName)
 
 def getImages():
-  images = http_client.getImageNames( "http://" + host + ":3000/" + 'image_names' )
+  images = http_client.getImageNames( "http://" + host + ":3000/" + 'image_paths' )
   for image in images:
     url = "http://" + host + ":3000/serve_image?imageName=" + image
     content = http_client.downloadImage(url)
