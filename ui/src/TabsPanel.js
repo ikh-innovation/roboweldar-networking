@@ -46,7 +46,7 @@ export default class TabsPanel extends React.Component {
   
   fetchImageNames() {
     HTTPWrapper.fetchURL( 
-      'http://localhost:3000/image_names',
+      'http://localhost:3000/image_paths',
       ( response ) => {
         if ( response.status === 200 )
           response.json().then( ( imageNames ) => {
