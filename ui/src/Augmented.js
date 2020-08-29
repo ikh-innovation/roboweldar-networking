@@ -61,11 +61,11 @@ export default class Augmented {
 
     window.addEventListener( 'resize', () => {
       this.camera.aspect =
-        rendererDOM.clientWidth / rendererDOM.clientHeight;
+        window.innerWidth / window.innerHeight;
       this.camera.updateProjectionMatrix();
       this.renderer.setSize(
-        rendererDOM.clientWidth / 2,
-        rendererDOM.clientHeight / 2
+        window.innerWidth / 2,
+        window.innerHeight / 2
       );
     }, false );
 
