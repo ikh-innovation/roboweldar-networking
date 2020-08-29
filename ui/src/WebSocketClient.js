@@ -1,18 +1,20 @@
 export default class WebSocketClient {
   constructor(properties) {
-    this.hostname = properties.hostname
-    this.webSocket = new WebSocket(`ws://${this.hostname}:3001/ui`);
+    const hostname = properties.hostname;
+    const port = properties.port;
+    const endpoint = properties.endpoint;
+    this.webSocket = new WebSocket(`ws://${hostname}:${port}/${endpoint}`);
     this.setEvents();
   }
-  
+
   /* gets overloaded in TabsPanel */
   overloadOnMessage( onMessage ) {
     this.webSocket.onmessage = onMessage;
   }
-  
+
   setEvents() {
     this.webSocket.onopen = ( e ) => {
-      
+
     };
     this.webSocket.onmessage = ( message ) => {
       console.log(message)

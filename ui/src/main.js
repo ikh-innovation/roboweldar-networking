@@ -2,14 +2,36 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './assets/index.css';
 
-import TabsPanel  from './TabsPanel.js';
+import Application  from './Application.js';
 import WebSocketClient from './WebSocketClient.js';
+import * as Config from './Config.js';
 
+/* move ws initialization in Application */
 
-let wsC = new WebSocketClient( { hostname: 'localhost' } );
+const wsProps = {
+  hostname: Config.serverHostName,
+  port: Config.serverWSPort,
+  endpoint: Config.serverWSUIEndpoint
+}
 
+const wsC = new WebSocketClient( wsProps );
 
-ReactDOM.render(<TabsPanel hostname='localhost' wsCli={wsC} />, document.querySelector('#user-panel'));
+const appProps = {
+  hostname: Config.serverHostName,
+  httpPort: Config.serverHTTPPort,
+  meshEndpoint: Config.meshFilesEndpoint,
+  imageNamesEndpoint: Config.imageNamesEndpoint,
+  serveImageEndpoint: Config.serveImageEndpoint,
+  arCanvasDOM: 'obj-mesh',
+  wsCli: wsC
+}
+
+ReactDOM.render(
+  <Application
+    { ...appProps }
+  />,
+  document.querySelector('#user-panel')
+);
 
 // Hot Module Replacement
 if (module.hot) {

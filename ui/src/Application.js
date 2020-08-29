@@ -15,75 +15,102 @@ import Augmented from './Augmented.js';
 import HTTPWrapper from './HTTPWrapper.js';
 
 
-export default class TabsPanel extends React.Component {
+export default class Application extends React.Component {
   constructor( properties ) {
     super( properties );
+
     this.hostname = properties.hostname;
+    this.httpPort = properties.httpPort;
+    this.meshEndpoint = properties.meshEndpoint;
+    this.imageNamesEndpoint = properties.imageNamesEndpoint;
+    this.serveImageEndpoint = properties.serveImageEndpoint;
+    this.arCanvasDOM = properties.arCanvasDOM;
+
     this.state = {
       value: 0,
       tabIndex: 0,
       imagePaths: []
     }
-    this.ar = new Augmented( 'obj-mesh' );
-    
+
+    const arProps = {
+      canvasDOMId: this.arCanvasDOM
+    }
+
+    this.ar = new Augmented( arProps );
+
     properties.wsCli.overloadOnMessage( ( message ) => {
       console.log(message)
       const parsed = JSON.parse(message.data);
-      if ( parsed.message === 'pc_complete' ) 
+      if ( parsed.message === 'pc_complete' )
         this.fetchImageNames()
-      if ( parsed.message === 'sfm_complete' ) 
+      if ( parsed.message === 'sfm_complete' )
         this.fetchMesh()
-    }); 
-    
+    });
   }
-  
+
   fetchMesh() {
-          this.ar.loadObj(
-            "male02.mtl",
-            "male02.obj"
-          ) 
+    const props = {
+      obj: 'male02.obj',
+      mtl: 'male02.mtl',
+      hostname: this.hostname,
+      port: this.httpPort,
+      endpoint: this.meshEndpoint
+    }
+    this.ar.loadObj( props );
   }
-  
+
   fetchImageNames() {
-    HTTPWrapper.fetchURL( 
-      'http://localhost:3000/image_paths',
+    const queryKey = 'name';
+    const hostname = this.hostname;
+    const port = this.httpPort;
+    const namesEndpoint = this.imageNamesEndpoint;
+    const serveEndpoint = this.serveImageEndpoint;
+
+    const imageNamesURL =
+      `http://${ hostname }:${ port }/${ namesEndpoint }`;
+
+    const serveImagesURL =
+      `http://${ hostname }:${ port }/${ serveEndpoint }`;
+
+    HTTPWrapper.fetchURL(
+      imageNamesURL,
       ( response ) => {
         if ( response.status === 200 )
           response.json().then( ( imageNames ) => {
             const paths =
               imageNames.map( ( name ) => {
-                return `http://localhost:3000/serve_image?imageName=${ name }`
+                return `${ serveImagesURL }?${queryKey}=${ name }`
               });
             this.setState({
               imagePaths: paths
             })
           })
       }
-    )    
+    )
   }
-  
+
   renderImages() {
     return(
       <SlideShow
-          images={this.state.imagePaths}
-          width="920px"
-          imagesWidth="800px"
-          imagesHeight="450px"
-          imagesHeightMobile="56vw"
-          thumbnailsWidth="920px"
-          thumbnailsHeight="12vw"
-          indicators thumbnails fixedImagesHeight
+        images={ this.state.imagePaths }
+        width="920px"
+        imagesWidth="800px"
+        imagesHeight="450px"
+        imagesHeightMobile="56vw"
+        thumbnailsWidth="920px"
+        thumbnailsHeight="12vw"
+        indicators thumbnails fixedImagesHeight
        />
      )
   }
-  
+
   handleChange( event, newValue ) {
     this.setState({
       tabIndex: newValue
     });
   };
 
-  
+
   tabPanel(args) {
     const { children, value, ...other } = args;
     return (
@@ -112,7 +139,7 @@ export default class TabsPanel extends React.Component {
       </div>
     );
   }
-  
+
   render() {
     return (
       <div className='panels'>
@@ -126,14 +153,14 @@ export default class TabsPanel extends React.Component {
             <Tab label="Item Three" { ...a11yProps(2) } />
           </Tabs>
         </AppBar>
-        { 
+        {
           this.tabPanel({
             hostname: this.hostname,
             value: 0
-          }) 
+          })
         }
       </div>
-    ); 
+    );
   }
 }
 
@@ -146,7 +173,7 @@ function reconstructionStatus( value ) {
 function sendPCStartSignal(hostname) {
   fetch(
     `http://${hostname}:3000/initialize_photo_capture`,
-     { 
+     {
         mode: 'cors',
         headers: {
           'Access-Control-Allow-Origin': '*'
@@ -163,10 +190,7 @@ function reconstructionButtons( hostname ) {
           color="primary"
           onClick={ () => { sendPCStartSignal( hostname) } }
         >
-          Start 3D Reconstruction
-        </Button>
-        <Button variant="outlined" color="secondary">
-          Stop 3D Reconstruction
+          Start
         </Button>
       </div>
     </Fragment>

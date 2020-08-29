@@ -1,8 +1,7 @@
-
 export default class HTTPWrapper {
   static fetchURL( url, callback ) {
     fetch( url )
-    .then( 
+    .then(
       ( response ) => {
         callback( response );
       },
@@ -11,12 +10,12 @@ export default class HTTPWrapper {
       }
     )
   }
-  
+
   static fetchImagesUrls( callback ) {
-    
+
   }
-  
+
   static fetchObj( callback ) {
-    
+
   }
 }
