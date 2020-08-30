@@ -1,8 +1,10 @@
 export default class WebSocketClient {
-  constructor(properties) {
-    const hostname = properties.hostname;
-    const port = properties.port;
-    const endpoint = properties.endpoint;
+  constructor( properties ) {
+    const {
+      hostname,
+      port,
+      endpoint
+    } = properties;
     this.webSocket = new WebSocket(`ws://${hostname}:${port}/${endpoint}`);
     this.setEvents();
   }

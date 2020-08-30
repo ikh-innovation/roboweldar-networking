@@ -6,8 +6,6 @@ import Application  from './Application.js';
 import WebSocketClient from './WebSocketClient.js';
 import * as Config from './Config.js';
 
-/* move ws initialization in Application */
-
 const wsProps = {
   hostname: Config.serverHostName,
   port: Config.serverWSPort,
@@ -22,7 +20,7 @@ const appProps = {
   meshEndpoint: Config.meshFilesEndpoint,
   imageNamesEndpoint: Config.imageNamesEndpoint,
   serveImageEndpoint: Config.serveImageEndpoint,
-  arCanvasDOM: 'obj-mesh',
+  arCanvasDOM: Config.objMeshDOM,
   wsCli: wsC
 }
 
@@ -30,7 +28,7 @@ ReactDOM.render(
   <Application
     { ...appProps }
   />,
-  document.querySelector('#user-panel')
+  document.getElementById( Config.applicationDOM )
 );
 
 // Hot Module Replacement

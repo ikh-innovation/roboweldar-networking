@@ -73,11 +73,13 @@ export default class Augmented {
   }
 
   loadObj( properties ) {
-    const mtlPath = properties.mtl;
-    const objPath = properties.obj;
-    const hostname = properties.hostname;
-    const port = properties.port;
-    const endpoint = properties.endpoint;
+    const {
+      mtl: mtlPath,
+      obj: objPath,
+      hostname,
+      port,
+      endpoint
+    } = properties;
 
     const meshFilesPath =
       `http://${hostname}:${port}/${endpoint}/`;

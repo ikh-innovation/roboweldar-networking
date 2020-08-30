@@ -1,27 +1,62 @@
-const express = require( 'express' );
-const multer = require( 'multer' );
-const fs = require( 'fs' );
-const cors = require('cors');
+import express from 'express';
+import multer from 'multer';
+import fs from 'fs';
+import cors from 'cors';
 
+export class HTTPServer {
+  constructor( properties ) {
+    const {
+      port,
+      imagesPath,
+      meshPath
+    } = properties;
+    this.server = express();
+    this.server.use( cors() );
+    this.server.listen( port );
+    this.initFiles( imagesPath, meshPath );
+  }
 
-class HTTPServer {
-  constructor(properties) {
-    const port = properties.port;
-    const imagesPath =
-      properties.imagesPath;
-    const meshPath =
-      properties.meshPath;
-    this.httpApp = express();
-    this.httpApp.use(cors());
-    this.httpApp.listen( port );
+  initFiles( imagesPath, meshPath ) {
     this.imageNamesServingEndpoint();
+
     this.initFileStorage(
       imagesPath,
       meshPath
     );
+
     this.initFileServing(
       imagesPath,
       meshPath
+    );
+  }
+
+  initFileServing( imagePath, meshPath ) {
+    this.server.use(
+      '/images',
+      express.static( imagePath )
+    );
+    this.server.use(
+      '/mesh',
+      express.static( meshPath )
+    );
+    this.imageServingEndpoint( imagePath );
+  }
+
+  imageServingEndpoint( imagePath ) {
+    this.server.get(
+      '/serve_image',
+      ( req, res ) => {
+        const imageName =
+          req.query.name
+        if (imageName)
+          res.sendFile(
+            `${imagePath}/${imageName}`,
+            { root: './' }
+          );
+        else res.json(
+          { 'message': 'image not found' }
+        );
+      }
     );
   }
 
@@ -60,7 +95,7 @@ class HTTPServer {
 
   /* add try/catch or validation */
   cacheImagesEndpoint( callback ) {
-    this.httpApp.post(
+    this.server.post(
       '/cache_images',
       this.imageUploader.array( 'files' ),
       ( req, res ) => {
@@ -74,7 +109,7 @@ class HTTPServer {
 
   /* add try/catch or validation */
   cacheMeshEndpoint( callback ) {
-    this.httpApp.post(
+    this.server.post(
       '/cache_mesh',
       this.pcUploader.array( 'files' ),
       ( req, res ) => {
@@ -87,14 +122,14 @@ class HTTPServer {
   }
 
   imageNamesServingEndpoint() {
-    this.httpApp.get(
+    this.server.get(
       '/image_names',
       ( req, res ) => {
         let fileNames = [];
         fs.readdir( './uploads/images/', ( err, files ) => {
           if ( err ) {
             res.json(
-              { 'message': 'error acquiring names from image files' }
+              { 'message': 'error acquiring image names' }
             );
             return;
           }
@@ -104,38 +139,8 @@ class HTTPServer {
     );
   }
 
-  initFileServing( imagePath, meshPath ) {
-    this.httpApp.use(
-      '/images',
-      express.static( imagePath )
-    );
-    this.httpApp.use(
-      '/mesh',
-      express.static( meshPath )
-    );
-    this.imageServingEndpoint( imagePath );
-  }
-
-  imageServingEndpoint( imagePath ) {
-    this.httpApp.get(
-      '/serve_image',
-      ( req, res ) => {
-        const imageName =
-          req.query.name
-        if (imageName)
-          res.sendFile(
-            `${imagePath}/${imageName}`,
-            { root: './' }
-          );
-        else res.json(
-          { 'message': 'image not found' }
-        );
-      }
-    );
-  }
-
   photoCaptureEndpoint( callback ) {
-    this.httpApp.get(
+    this.server.get(
       '/initialize_photo_capture',
       ( req, res ) => {
         callback( req, res );
@@ -146,5 +151,3 @@ class HTTPServer {
     );
   }
 }
-
-module.exports.HTTPServer = HTTPServer;

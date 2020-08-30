@@ -1,9 +1,7 @@
-const logger = require( './logger.js' );
-const Config = require('./Config');
-const HTTPServer =
-  require( './HTTPServer/HTTPServer.js' ).HTTPServer;
-const WebSocketServer =
-  require( './WebSocketServer/WebSocketServer.js' ).WebSocketServer;
+import * as logger from './logger.js';
+import * as Config from './Config/index.js';
+import { HTTPServer } from './HTTPServer/HTTPServer.js';
+import { WebSocketServer } from './WebSocketServer/WebSocketServer.js';
 
 function runMe() {
   const httpProperties = {

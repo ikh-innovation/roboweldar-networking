@@ -2,7 +2,7 @@
   "name": "server",
   "version": "1.0.0",
   "description": "",
-  "proxy": "http://localhost:3000",
+  "type": "module",
   "scripts": {
     "start": "node src/main.js",
     "test": "echo \"Error: no test specified\" && exit 1"

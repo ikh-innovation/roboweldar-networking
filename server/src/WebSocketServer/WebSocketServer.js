@@ -1,19 +1,20 @@
-const WebSocket = require( 'ws' );
-const uuid = require('uuid'); /* unique id for ws clients */
+import WebSocket from 'ws';
+import * as uuid from 'uuid';
 
-class WebSocketServer {
+export class WebSocketServer {
   constructor( props ) {
     this.port = props.port;
     this.httpServer = props.httpApp;
-    this.webSocketServer = 
+    this.webSocketServer =
       new WebSocket.Server( { port: this.port } );
     this.setEvents();
   }
 
   setEvents() {
     this.webSocketServer.on( 'connection', ( client, req ) => {
-      const clientPath = req.url.substring(1) /* removes "/" (eg from /ui) */
-      client.path = clientPath
+      /* removes "/" (eg from /ui) */
+      const clientPath = req.url.substring(1);
+      client.path = clientPath;
       client.id = uuid.v4();
       if (
         clientPath === 'photo_capture' &&
@@ -68,5 +69,3 @@ class WebSocketServer {
   }
 
 }
-
-module.exports.WebSocketServer = WebSocketServer;

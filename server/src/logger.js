@@ -1,24 +1,17 @@
-const chalk = require( 'chalk' );
+import chalk from 'chalk';
 
-function warn( msg ) {
+export function warn( msg ) {
   console.log( chalk.yellow( msg ) );
 }
 
-function err( msg ) {
+export function err( msg ) {
   console.log( chalk.red( msg ) );
 }
 
-function debug( msg ) {
+export function debug( msg ) {
   console.log( chalk.orange( msg ) );
 }
 
-function success( msg ) {
+export function success( msg ) {
   console.log( chalk.green( msg ) );
 }
-
-module.exports = { 
-  warn: warn,
-  err: err,
-  debug: debug,
-  success: success
-};
