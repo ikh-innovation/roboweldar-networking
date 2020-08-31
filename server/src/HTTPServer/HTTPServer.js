@@ -122,10 +122,10 @@ export class HTTPServer {
             fs.writeFileSync(`${file.destination}/model.gltf`, data);
           });
         });
-        callback( req, res );
         res.json(
           { 'message': 'cache point cloud page hit' }
         );
+        callback( req, res );
       }
     );
   }
