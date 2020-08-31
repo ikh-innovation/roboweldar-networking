@@ -51,8 +51,9 @@ export class HTTPServer {
         const imageName =
           req.query.name
         if (imageName)
-          res.download(
-            `${imagePath}/${imageName}`
+          res.sendFile(
+            `${imagePath}/${imageName}`,
+            { root: './' }
           );
         else res.json(
           { 'message': 'image not found' }
