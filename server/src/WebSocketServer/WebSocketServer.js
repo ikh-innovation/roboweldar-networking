@@ -8,6 +8,8 @@ export class WebSocketServer {
     this.webSocketServer =
       new WebSocket.Server( { port: this.port } );
     this.setEvents();
+    this.pcStatus = 0;
+    this.sfmStatus = 0;
   }
 
   setEvents() {
@@ -40,6 +42,19 @@ export class WebSocketServer {
     });
   }
 
+  updateGUIStatus() {
+    this.webSocketServer.clients.forEach( ( client ) => {
+      if ( client.path === 'ui' ) {
+        this.sendWSClient(
+          client,
+          JSON.stringify(
+            { pcStatus: this.pcStatus }
+          )
+        );
+      }
+    });
+  }
+  
   setPhotoCaptureClient( client ) {
     client.on( 'message', ( message ) => {
       if (message.status)
@@ -55,7 +70,7 @@ export class WebSocketServer {
   setSfMClient( client ) {
     client.on( 'message' , ( message ) => {
       if (message.status)
-        this.SfMStatus = message.status
+        this.sfmStatus = message.status
       console.log( 'received: %s', message );
     } );
     client.on('close', () => {

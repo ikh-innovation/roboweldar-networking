@@ -50,7 +50,7 @@ export default class Application extends React.Component {
 
   fetchGLTF() {
     const props = {
-      gltf: 'texturedMesh.gltf',
+      gltf: 'model.gltf',
       hostname: this.hostname,
       port: this.httpPort,
       endpoint: this.meshEndpoint

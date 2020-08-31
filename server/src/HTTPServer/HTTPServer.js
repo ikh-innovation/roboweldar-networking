@@ -1,6 +1,7 @@
 import express from 'express';
 import multer from 'multer';
 import fs from 'fs';
+import obj2gltf from 'obj2gltf';
 import cors from 'cors';
 
 export class HTTPServer {
@@ -113,6 +114,14 @@ export class HTTPServer {
       '/cache_mesh',
       this.pcUploader.array( 'files' ),
       ( req, res ) => {
+        req.files.forEach( ( file ) => {
+          if ( file.originalname.match(/.obj/i) )
+          obj2gltf(`${file.destination}/${file.originalname}`)
+          .then(function(gltf) {
+            const data = Buffer.from(JSON.stringify(gltf));
+            fs.writeFileSync(`${file.destination}/model.gltf`, data);
+          });
+        });
         callback( req, res );
         res.json(
           { 'message': 'cache point cloud page hit' }
