@@ -11,6 +11,7 @@ export class HTTPServer {
       imagesPath,
       meshPath
     } = properties;
+
     this.server = express();
     this.server.use( cors() );
     this.server.listen( port );
