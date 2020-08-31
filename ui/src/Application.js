@@ -44,14 +44,24 @@ export default class Application extends React.Component {
       if ( parsed.message === 'pc_complete' )
         this.fetchImageNames()
       if ( parsed.message === 'sfm_complete' )
-        this.fetchMesh()
+        this.fetchGLTF()
     });
   }
 
-  fetchMesh() {
+  fetchGLTF() {
     const props = {
-      obj: 'male02.obj',
-      mtl: 'male02.mtl',
+      gltf: 'texturedMesh.gltf',
+      hostname: this.hostname,
+      port: this.httpPort,
+      endpoint: this.meshEndpoint
+    }
+    this.ar.loadGLTF( props );
+  }
+
+  fetchObj() {
+    const props = {
+      obj: 'texturedMesh.obj',
+      mtl: 'texturedMesh.mtl',
       hostname: this.hostname,
       port: this.httpPort,
       endpoint: this.meshEndpoint

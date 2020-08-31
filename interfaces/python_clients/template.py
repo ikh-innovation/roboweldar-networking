@@ -9,6 +9,7 @@
 #   python2 template.py localhost http cache_mesh
 
 import ws_client, http_client, sys
+from os import listdir
 host = "localhost"
 
 def connectWS(endpoint):
@@ -20,9 +21,10 @@ def connectWS(endpoint):
 def sendDummyFiles(endpoint):
   #dummy data, files with those names should exist in this dir 
   if (endpoint == "cache_images"):
-      files = ["image1.jpg", "image2.jpg", "image3.jpg"]
+    files = ["image1.jpg", "image2.jpg", "image3.jpg"]
   elif (endpoint == "cache_mesh"):
-      files = ["mesh.obj", "mesh.mtl"]
+    filesNames = listdir('./meshFiles')
+    files = map( lambda fileName: './meshFiles/' + fileName, filesNames )
   http_client.send_images("http://" + host + ":3000/" + endpoint, files)
 
 # obj upload example (mesh)

@@ -5,7 +5,12 @@ export default class WebSocketClient {
       port,
       endpoint
     } = properties;
-    this.webSocket = new WebSocket(`ws://${hostname}:${port}/${endpoint}`);
+
+    this.webSocket =
+      new WebSocket(
+        `ws://${hostname}:${port}/${endpoint}`
+      );
+
     this.setEvents();
   }
 

@@ -4,6 +4,7 @@ import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js';
 import { DDSLoader } from 'three/examples/jsm/loaders/DDSLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import * as Config from './Config.js';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 export default class Augmented {
   constructor( properties ) {
@@ -36,10 +37,12 @@ export default class Augmented {
       new Three.WebGLRenderer( { canvas: rendererDOM } );
 
     const ambientLight =
-      new Three.AmbientLight( 0xcccccc, 2 );
+      new Three.AmbientLight( 0xcccccc, 1 );
 
-    const pointLight =
-      new Three.PointLight( 0xffffff, 1 );
+    const dirLight = new Three.DirectionalLight(0xffffff, 5);
+
+    this.scene.add( dirLight );
+    this.scene.add( ambientLight );
 
     const controls =
       new OrbitControls(
@@ -53,11 +56,8 @@ export default class Augmented {
     );
     rendererDOM.style.visibility = 'hidden';
 
-    this.renderer.setClearColor( 0xAFAFBF, 1 );
-    this.camera.position.z = 250;
-    this.camera.position.y = 50;
-    this.scene.add( ambientLight );
-    this.camera.add( pointLight );
+    this.renderer.setClearColor( 0xBFAF1F, 1 );
+    this.camera.position.z = 25;
 
     window.addEventListener( 'resize', () => {
       this.camera.aspect =
@@ -70,6 +70,35 @@ export default class Augmented {
     }, false );
 
     animate();
+  }
+
+  loadGLTF( properties ) {
+    const {
+      gltf: gltfPath,
+      hostname,
+      port,
+      endpoint
+    } = properties;
+
+    const filesPath =
+      `http://${hostname}:${port}/${endpoint}/${gltfPath}`;
+
+    const gltfLoader = new GLTFLoader();
+    const scene = this.scene;
+    gltfLoader.load(
+      filesPath,
+      ( gltf ) => {
+        scene.add( gltf.scene );
+        this.renderer.domElement.style.visibility =
+                  'visible';
+      },
+      ( xhr ) => {
+        onLoadProgress( xhr );
+      },
+      ( error ) => {
+        onLoadError( error );
+      }
+    );
   }
 
   loadObj( properties ) {
@@ -89,7 +118,7 @@ export default class Augmented {
 
     objLoader.setPath( meshFilesPath );
     mtlLoader.setPath( meshFilesPath );
-
+    mtlLoader.setMaterialOptions( { invertTrProperty: true } )
     mtlLoader.load(
       mtlPath,
       ( materials ) => {
@@ -111,6 +140,8 @@ function objLoad( objLoader, objPath, scene ) {
   objLoader.load(
     objPath,
     ( object ) => {
+      //object.scale.set( 5, 5, 5);
+      object.rotation.set( Math.PI / 2, 0, 0 );
       scene.add( object );
     },
     ( xhr ) => {
