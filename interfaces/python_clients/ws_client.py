@@ -4,7 +4,7 @@ def on_message(ws, message):
   if (re.search("photo_capture", ws.header[0])):
       # process
       # upload files to server (http)
-      
+
       print("photo_capture related")
   elif (re.search("sfm", ws.header[0])):
       # get images url's from server (http)

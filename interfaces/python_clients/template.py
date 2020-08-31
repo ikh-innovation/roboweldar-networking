@@ -21,7 +21,7 @@ def connectWS(endpoint):
   time.sleep(5)
   try:
     while (running):
-      message = '{ "pcStatus": 5 }'
+      message = '{ "status": 5 }'
       ws_client.send_message(wsClient, message)
       time.sleep(1)
 

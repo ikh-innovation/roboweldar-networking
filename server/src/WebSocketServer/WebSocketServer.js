@@ -56,12 +56,18 @@ export class WebSocketServer {
       }
     });
   }
-  
+
   setPhotoCaptureClient( client ) {
     client.on( 'message', ( message ) => {
-      if (message.status)
-        this.pcStatus = message.status;
-        this.transmitStatus( this.pcStatus );
+      try {
+        const parsedMessage = JSON.parse( message );
+        if (parsedMessage.status) {
+          this.pcStatus = parsedMessage.status;
+          this.transmitStatus( this.pcStatus );
+        }
+      } catch ( exception ) {
+        console.log( exception );
+      }
     } );
     client.on('close', () => {
       this.photoCaptureClient = undefined;
@@ -71,9 +77,16 @@ export class WebSocketServer {
 
   setSfMClient( client ) {
     client.on( 'message' , ( message ) => {
-      if (message.status)
-        this.sfmStatus = message.status
-        this.transmitStatus( this.sfmStatus );
+      try {
+        const parsedMessage = JSON.parse( message );
+        if (parsedMessage.status) {
+          this.sfmStatus = parsedMessage.status
+          this.transmitStatus( this.sfmStatus );
+        }
+        console.log(parsedMessage)
+      } catch ( exception ) {
+        console.log( exception );
+      }
     } );
     client.on('close', () => {
        this.SfMClient = undefined;

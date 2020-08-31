@@ -19,7 +19,7 @@ def getImageNames(link):
     return names
   else:
     print( 'request not served correctly', r)
-    
+
 def downloadImage(link):
   r = requests.get(link)
   if (r.status_code == 200):
