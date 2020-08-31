@@ -1,6 +1,7 @@
 import websocket, numpy, wsaccel, re
 
 def on_message(ws, message):
+  print(message)
   if (re.search("photo_capture", ws.header[0])):
       # process
       # upload files to server (http)

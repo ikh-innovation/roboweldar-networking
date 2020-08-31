@@ -10,6 +10,7 @@ import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 import Augmented from './Augmented.js';
 import HTTPWrapper from './HTTPWrapper.js';
@@ -29,7 +30,9 @@ export default class Application extends React.Component {
     this.state = {
       value: 0,
       tabIndex: 0,
-      imagePaths: []
+      imagePaths: [],
+      pcStatus: 0,
+      sfmStatus: 0
     }
 
     const arProps = {
@@ -39,12 +42,13 @@ export default class Application extends React.Component {
     this.ar = new Augmented( arProps );
 
     properties.wsCli.overloadOnMessage( ( message ) => {
-      console.log(message)
       const parsed = JSON.parse(message.data);
       if ( parsed.message === 'pc_complete' )
         this.fetchImageNames()
       if ( parsed.message === 'sfm_complete' )
         this.fetchGLTF()
+      if ( parsed.pcStatus ) this.setState( { pcStatus: parsed.pcStatus } );
+      if ( parsed.sfmStatus ) this.setState( { sfmStatus: parsed.sfmStatus } );
     });
   }
 
@@ -163,6 +167,8 @@ export default class Application extends React.Component {
             <Tab label="Item Three" { ...a11yProps(2) } />
           </Tabs>
         </AppBar>
+        <LinearProgressWithLabel value={this.state.sfmStatus} />
+        <LinearProgressWithLabel value={this.state.pcStatus} />
         {
           this.tabPanel({
             hostname: this.hostname,
@@ -174,6 +180,29 @@ export default class Application extends React.Component {
   }
 }
 
+function LinearProgressWithLabel(props) {
+  return (
+    <Box display="flex" alignItems="center">
+      <Box width="100%" mr={1}>
+        <LinearProgress variant="determinate" {...props} />
+      </Box>
+      <Box minWidth={35}>
+        <Typography variant="body2" color="textSecondary">{`${Math.round(
+          props.value,
+        )}%`}</Typography>
+      </Box>
+    </Box>
+  );
+}
+
+LinearProgressWithLabel.propTypes = {
+  /**
+   * The value of the progress indicator for the determinate and buffer variants.
+   * Value between 0 and 100.
+   */
+  value: PropTypes.number.isRequired,
+};
+
 function reconstructionStatus( value ) {
   return (
    <div> Status : tbd </div> 
@@ -182,7 +211,7 @@ function reconstructionStatus( value ) {
 
 function sendPCStartSignal(hostname) {
   fetch(
-    `http://${hostname}:3000/initialize_photo_capture`,
+    `http://${hostname}:3000/start_photo_capture`,
      {
         mode: 'cors',
         headers: {
@@ -191,6 +220,19 @@ function sendPCStartSignal(hostname) {
      }
    );
 }
+
+function sendSfMStopSignal(hostname) {
+  fetch(
+    `http://${hostname}:3000/stop_sfm`,
+    {
+      mode: 'cors',
+      headers: {
+        'Access-Control-Allow-Origin': '*'
+      }
+    }
+  );
+}
+
 
 function reconstructionButtons( hostname ) {
   return (
@@ -201,6 +243,12 @@ function reconstructionButtons( hostname ) {
           onClick={ () => { sendPCStartSignal( hostname) } }
         >
           Start
+        </Button>
+        <Button variant="outlined"
+          color="secondary"
+          onClick={ () => { sendSfMStopSignal( hostname) } }
+        >
+          Stop
         </Button>
       </div>
     </Fragment>

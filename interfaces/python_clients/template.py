@@ -18,10 +18,14 @@ def connectWS(endpoint):
   wst.daemon = True
   wst.start()
   running = True
-  time.sleep(5)
+  time.sleep(2)
   try:
     while (running):
-      message = '{ "status": 5 }'
+      if (endpoint == 'sfm' ):
+        val = 5
+      else:
+        val = 15
+      message = json.dumps( { "status": val } )
       ws_client.send_message(wsClient, message)
       time.sleep(1)
 
@@ -47,7 +51,7 @@ def sendMesh(fName):
 def getImages():
   images = http_client.getImageNames( "http://" + host + ":3000/" + 'image_names' )
   for image in images:
-    url = "http://" + host + ":3000/serve_image?imageName=" + image
+    url = "http://" + host + ":3000/serve_image?name=" + image
     content = http_client.downloadImage(url)
     with open( str(image), 'wb') as f:
       f.write( content )

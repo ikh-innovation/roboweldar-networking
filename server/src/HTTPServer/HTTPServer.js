@@ -11,6 +11,7 @@ export class HTTPServer {
       imagesPath,
       meshPath
     } = properties;
+
     this.server = express();
     this.server.use( cors() );
     this.server.listen( port );
@@ -50,9 +51,8 @@ export class HTTPServer {
         const imageName =
           req.query.name
         if (imageName)
-          res.sendFile(
-            `${imagePath}/${imageName}`,
-            { root: './' }
+          res.download(
+            `${imagePath}/${imageName}`
           );
         else res.json(
           { 'message': 'image not found' }
@@ -148,13 +148,25 @@ export class HTTPServer {
     );
   }
 
-  photoCaptureEndpoint( callback ) {
+  photoCaptureStartEndpoint( callback ) {
     this.server.get(
-      '/initialize_photo_capture',
+      '/start_photo_capture',
       ( req, res ) => {
         callback( req, res );
         res.json(
-          { 'message': 'initialize_photo_capture page hit' }
+          { 'message': 'start_photo_capture page hit' }
+        );
+      }
+    );
+  }
+
+  sfmStopEndpoint( callback ) {
+    this.server.get(
+      '/stop_sfm',
+      ( req, res ) => {
+        callback( req, res );
+        res.json(
+          { 'message': 'stop_photo_capture page hit' }
         );
       }
     );

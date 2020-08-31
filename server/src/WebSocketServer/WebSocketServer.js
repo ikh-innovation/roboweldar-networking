@@ -20,11 +20,11 @@ export class WebSocketServer {
       client.id = uuid.v4();
       if (
         clientPath === 'photo_capture' &&
-        !this.photoCaptureClient
+        !this.pcClient
       ) this.setPhotoCaptureClient( client );
       else if (
         clientPath === 'sfm' &&
-        !this.SfMClient
+        !this.sfmClient
       ) this.setSfMClient( client );
       else if ( clientPath === 'ui' )
         this.addUIClient( client );
@@ -42,6 +42,7 @@ export class WebSocketServer {
     });
   }
 
+  /* should be callback in main.js */
   transmitStatus( status ) {
     const key =
       ( status === this.pcStatus )?
@@ -70,9 +71,9 @@ export class WebSocketServer {
       }
     } );
     client.on('close', () => {
-      this.photoCaptureClient = undefined;
+      this.pcClient = undefined;
     });
-    this.photoCaptureClient = client;
+    this.pcClient = client;
   }
 
   setSfMClient( client ) {
@@ -83,15 +84,14 @@ export class WebSocketServer {
           this.sfmStatus = parsedMessage.status
           this.transmitStatus( this.sfmStatus );
         }
-        console.log(parsedMessage)
       } catch ( exception ) {
         console.log( exception );
       }
     } );
     client.on('close', () => {
-       this.SfMClient = undefined;
+      this.sfmClient = undefined;
     });
-    this.SfMClient = client;
+    this.sfmClient = client;
   }
 
   sendWSClient( client, message ) {
