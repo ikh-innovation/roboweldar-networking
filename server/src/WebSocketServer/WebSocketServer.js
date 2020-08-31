@@ -42,14 +42,16 @@ export class WebSocketServer {
     });
   }
 
-  updateGUIStatus() {
+  transmitStatus( status ) {
+    const key =
+      ( status === this.pcStatus )?
+        'pcStatus' :
+        'sfmStatus' ;
     this.webSocketServer.clients.forEach( ( client ) => {
       if ( client.path === 'ui' ) {
         this.sendWSClient(
           client,
-          JSON.stringify(
-            { pcStatus: this.pcStatus }
-          )
+          `{ \"${key}\" : ${status} }`
         );
       }
     });
@@ -58,8 +60,8 @@ export class WebSocketServer {
   setPhotoCaptureClient( client ) {
     client.on( 'message', ( message ) => {
       if (message.status)
-        this.pcStatus = message.status
-      console.log('received: %s', message );
+        this.pcStatus = message.status;
+        this.transmitStatus( this.pcStatus );
     } );
     client.on('close', () => {
       this.photoCaptureClient = undefined;
@@ -71,7 +73,7 @@ export class WebSocketServer {
     client.on( 'message' , ( message ) => {
       if (message.status)
         this.sfmStatus = message.status
-      console.log( 'received: %s', message );
+        this.transmitStatus( this.sfmStatus );
     } );
     client.on('close', () => {
        this.SfMClient = undefined;

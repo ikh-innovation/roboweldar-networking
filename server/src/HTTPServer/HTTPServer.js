@@ -117,7 +117,7 @@ export class HTTPServer {
         req.files.forEach( ( file ) => {
           if ( file.originalname.match(/.obj/i) )
           obj2gltf(`${file.destination}/${file.originalname}`)
-          .then(function(gltf) {
+          .then( (gltf) => {
             const data = Buffer.from(JSON.stringify(gltf));
             fs.writeFileSync(`${file.destination}/model.gltf`, data);
           });

@@ -8,13 +8,25 @@
 #   python2 template.py localhost http cache_images
 #   python2 template.py localhost http cache_mesh
 
-import ws_client, http_client, sys
+import ws_client, http_client, json, sys, threading, time
 from os import listdir
 host = "localhost"
 
 def connectWS(endpoint):
   wsClient = ws_client.getClient("ws://" + host + ":3001/" + endpoint)
-  wsClient.run_forever()
+  wst = threading.Thread(target=wsClient.run_forever)
+  wst.daemon = True
+  wst.start()
+  running = True
+  time.sleep(5)
+  try:
+    while (running):
+      message = '{ "pcStatus": 5 }'
+      ws_client.send_message(wsClient, message)
+      time.sleep(1)
+
+  except KeyboardInterrupt:
+    running = False
 
 # endpoint either "cache_images"
 # or "cache_mesh"

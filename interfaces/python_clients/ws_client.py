@@ -34,6 +34,6 @@ def getClient(link):
   ws = websocket.WebSocketApp(link,
                               on_message = on_message,
                               on_error = on_error,
-                              on_close = on_close)
-  ws.on_open = on_open
+                              on_close = on_close,
+                              on_open = on_open)
   return ws
