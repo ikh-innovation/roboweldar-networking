@@ -37,7 +37,8 @@ def connectWS(endpoint):
 def sendDummyFiles(endpoint):
   #dummy data, files with those names should exist in this dir 
   if (endpoint == "cache_images"):
-    files = ["image1.jpg", "image2.jpg", "image3.jpg"]
+    filesNames = listdir('./images')
+    files = map( lambda fileName: './images/' + fileName, filesNames )
   elif (endpoint == "cache_mesh"):
     filesNames = listdir('./meshFiles')
     files = map( lambda fileName: './meshFiles/' + fileName, filesNames )

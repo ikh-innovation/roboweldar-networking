@@ -19,7 +19,6 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Augmented from './Augmented.js';
 import HTTPWrapper from './HTTPWrapper.js';
 
-
 export default class Application extends React.Component {
   constructor( properties ) {
     super( properties );
@@ -81,6 +80,9 @@ export default class Application extends React.Component {
       port: this.httpPort,
       endpoint: this.meshEndpoint
     }
+    this.setState( {
+      sfmStatus: 100
+    } );
     this.state.modalOpen = true;
     this.ar.loadGLTF(
       props,
@@ -95,7 +97,7 @@ export default class Application extends React.Component {
       }
     );
   }
-
+  /* not currently in use */
   fetchObj() {
     const props = {
       obj: 'texturedMesh.obj',
@@ -150,7 +152,8 @@ export default class Application extends React.Component {
         imagesHeightMobile="56vw"
         thumbnailsWidth="920px"
         thumbnailsHeight="12vw"
-        indicators thumbnails fixedImagesHeight
+        indicators={false}
+        thumbnails fixedImagesHeight
        />
      )
   }

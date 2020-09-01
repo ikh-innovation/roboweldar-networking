@@ -55,7 +55,7 @@ export default class Augmented {
 
     this.controls.enableDamping = true;
     this.controls.dampingFactor = 0.05 ;
-    
+
     this.renderer.setSize(
       window.innerWidth / 2,
       window.innerHeight / 2
@@ -96,6 +96,8 @@ export default class Augmented {
     gltfLoader.load(
       filesPath,
       ( gltf ) => {
+        const obj = gltf.scene;
+        obj.rotation.set( Math.PI, 0, 0 );
         scene.add( gltf.scene );
         this.renderer.domElement.style.visibility =
                   'visible';
