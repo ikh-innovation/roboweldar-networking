@@ -11,6 +11,10 @@ import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import LinearProgress from '@material-ui/core/LinearProgress';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Dialog from '@material-ui/core/Dialog';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
 import Augmented from './Augmented.js';
 import HTTPWrapper from './HTTPWrapper.js';
@@ -32,7 +36,9 @@ export default class Application extends React.Component {
       tabIndex: 0,
       imagePaths: [],
       pcStatus: 0,
-      sfmStatus: 0
+      sfmStatus: 0,
+      xhrLoading: 0,
+      modalOpen: false
     }
 
     const arProps = {
@@ -52,6 +58,22 @@ export default class Application extends React.Component {
     });
   }
 
+  renderLoadingCircle() {
+    return(
+      <Dialog
+        fullScreen={false}
+        open={this.state.modalOpen}
+//         onClose={handleClose}
+        aria-labelledby="responsive-dialog-title"
+      > 
+        <DialogTitle> Loading Mesh </DialogTitle>
+        <DialogContent style={{height:'6em',width:'8em'}}>
+          <CircularProgress style={{display: 'block',margin:'auto',height:'4em',width:'4em'}} variant="static" value={ this.state.xhrLoading } />
+        </DialogContent>
+      </Dialog>
+    )
+  }
+
   fetchGLTF() {
     const props = {
       gltf: 'model.gltf',
@@ -59,7 +81,19 @@ export default class Application extends React.Component {
       port: this.httpPort,
       endpoint: this.meshEndpoint
     }
-    this.ar.loadGLTF( props );
+    this.state.modalOpen = true;
+    this.ar.loadGLTF(
+      props,
+      (xhr) => {
+        this.setState( {
+          xhrLoading: xhr
+        } )
+      }, () => {
+        this.setState( {
+          modalOpen: false
+        } );
+      }
+    );
   }
 
   fetchObj() {
@@ -98,6 +132,9 @@ export default class Application extends React.Component {
             this.setState({
               imagePaths: paths
             })
+            this.setState( {
+              pcStatus: 100
+            } );
           })
       }
     )
@@ -138,8 +175,7 @@ export default class Application extends React.Component {
         { this.state.tabIndex === 0 && 
           (
           <Box >
-            { reconstructionButtons( args.hostname ) }
-            { reconstructionStatus() }
+            { this.reconstructionButtons( args.hostname ) }
           </Box>
           ) 
         }
@@ -149,8 +185,41 @@ export default class Application extends React.Component {
           </Box>
           ) 
         }
-        {this.renderImages()}
+        { this.renderImages() }
+        { this.renderLoadingCircle() }
       </div>
+    );
+  }
+
+  reconstructionLoadingBars() {
+    return(
+      <Fragment>
+        <Typography variant='body1' component='p' > Photo Capture </Typography>
+        <LinearProgressWithLabel value={this.state.pcStatus} />
+        <Typography variant='body1' component='p' > SfM </Typography>
+        <LinearProgressWithLabel value={this.state.sfmStatus} />
+      </Fragment>
+    )
+  }
+  reconstructionButtons( hostname ) {
+    return (
+      <Fragment>
+        <div>
+          <Button variant="outlined"
+            color="primary"
+            onClick={ () => { sendPCStartSignal( hostname) } }
+          >
+            Start
+          </Button>
+          <Button variant="outlined"
+            color="secondary"
+            onClick={ () => { sendSfMStopSignal( hostname) } }
+          >
+            Stop
+          </Button>
+        </div>
+        { this.reconstructionLoadingBars() }
+      </Fragment>
     );
   }
 
@@ -167,8 +236,6 @@ export default class Application extends React.Component {
             <Tab label="Item Three" { ...a11yProps(2) } />
           </Tabs>
         </AppBar>
-        <LinearProgressWithLabel value={this.state.sfmStatus} />
-        <LinearProgressWithLabel value={this.state.pcStatus} />
         {
           this.tabPanel({
             hostname: this.hostname,
@@ -203,12 +270,6 @@ LinearProgressWithLabel.propTypes = {
   value: PropTypes.number.isRequired,
 };
 
-function reconstructionStatus( value ) {
-  return (
-   <div> Status : tbd </div> 
-  )
-}
-
 function sendPCStartSignal(hostname) {
   fetch(
     `http://${hostname}:3000/start_photo_capture`,
@@ -230,28 +291,6 @@ function sendSfMStopSignal(hostname) {
         'Access-Control-Allow-Origin': '*'
       }
     }
-  );
-}
-
-
-function reconstructionButtons( hostname ) {
-  return (
-    <Fragment>
-      <div>
-        <Button variant="outlined"
-          color="primary"
-          onClick={ () => { sendPCStartSignal( hostname) } }
-        >
-          Start
-        </Button>
-        <Button variant="outlined"
-          color="secondary"
-          onClick={ () => { sendSfMStopSignal( hostname) } }
-        >
-          Stop
-        </Button>
-      </div>
-    </Fragment>
   );
 }
 

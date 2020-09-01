@@ -15,6 +15,7 @@ export default class Augmented {
   initThree( canvasDOMId ) {
     const animate = () => {
       requestAnimationFrame( animate );
+      this.controls.update();
       this.renderer.render(
         this.scene,
         this.camera
@@ -44,19 +45,26 @@ export default class Augmented {
     this.scene.add( dirLight );
     this.scene.add( ambientLight );
 
-    const controls =
+    this.controls =
       new OrbitControls(
         this.camera,
         rendererDOM
       );
 
+    //this.controls.autoRotate = true;
+
+    this.controls.enableDamping = true;
+    this.controls.dampingFactor = 0.05 ;
+    
     this.renderer.setSize(
       window.innerWidth / 2,
       window.innerHeight / 2
     );
     rendererDOM.style.visibility = 'hidden';
+    rendererDOM.style.borderRadius="10px";
+    rendererDOM.style.border="5px solid black";
 
-    this.renderer.setClearColor( 0xBFAF1F, 1 );
+    this.renderer.setClearColor( 0xFFFAFA, 1 );
     this.camera.position.z = 25;
 
     window.addEventListener( 'resize', () => {
@@ -72,7 +80,7 @@ export default class Augmented {
     animate();
   }
 
-  loadGLTF( properties ) {
+  loadGLTF( properties, xhrCallback, completionCallback ) {
     const {
       gltf: gltfPath,
       hostname,
@@ -91,9 +99,11 @@ export default class Augmented {
         scene.add( gltf.scene );
         this.renderer.domElement.style.visibility =
                   'visible';
+        completionCallback();
       },
       ( xhr ) => {
-        onLoadProgress( xhr );
+        xhrCallback( parseInt( (xhr.loaded / xhr.total * 100 ) ) );
+//        onLoadProgress( xhr );
       },
       ( error ) => {
         onLoadError( error );
