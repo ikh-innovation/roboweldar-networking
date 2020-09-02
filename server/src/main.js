@@ -20,7 +20,7 @@ function runMe() {
 
   httpServer.webSocketServer = wsServer;
 
-  httpServer.photoCaptureStartEndpoint(( req, res ) => {
+  httpServer.photoCaptureStartEndpoint( ( req, res ) => {
     if (wsServer.pcClient) {
       wsServer.sendWSClient(
         wsServer.pcClient,
@@ -40,7 +40,6 @@ function runMe() {
     }
   });
 
-  
   httpServer.sfmStopEndpoint( ( req, res ) => {
     if (wsServer.sfmClient) {
       wsServer.sendWSClient(
