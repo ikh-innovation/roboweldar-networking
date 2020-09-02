@@ -1,0 +1,4 @@
+- software licenses for photo capture & sfm
+- photo capture definition more?
+- sfm definition more?
+- GUI mockups maybe?
