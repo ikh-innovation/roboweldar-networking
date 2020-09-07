@@ -116,7 +116,7 @@ export default class Augmented {
   }
 
   initGroundPlane() {
-    const geometry = new Three.PlaneGeometry( 10, 10, 32 );
+    const geometry = new Three.PlaneGeometry( 5, 5, 8, 8 );
     const material =
       new Three.MeshBasicMaterial(
         {
