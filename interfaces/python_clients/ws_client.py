@@ -1,4 +1,4 @@
-import websocket, numpy, wsaccel, re
+import websocket, re
 
 def on_message(ws, message):
   print(message)

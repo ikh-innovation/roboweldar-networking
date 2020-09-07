@@ -12,11 +12,10 @@
 
 import ws_client, http_client, json, sys, threading, time
 from os import listdir
-host = 'localhost'
 httpPort = "3000"
 wsPort = "3001"
 
-def connectWS(endpoint):
+def connectWS(endpoint, host):
   wsClient = ws_client.getClient('ws://' + host + ':' + wsPort + '/' + endpoint)
   wst = threading.Thread(target=wsClient.run_forever)
   wst.daemon = True
@@ -38,7 +37,7 @@ def connectWS(endpoint):
 
 # endpoint either 'cache_images'
 # or 'cache_mesh'
-def sendDummyFiles(endpoint):
+def sendDummyFiles(endpoint, host):
   #dummy data, files with those names should exist in this dir 
   if (endpoint == 'cache_images'):
     filesNames = listdir('./images')
@@ -68,10 +67,10 @@ def runMe():
   host = sys.argv[1]
   if (sys.argv[2] == 'ws'):
     thisModuleHeader = sys.argv[3]
-    connectWS(thisModuleHeader)
+    connectWS(thisModuleHeader, host)
   elif (sys.argv[2] == 'http'):
     thisModuleFileEndpoint = sys.argv[3]
-    sendDummyFiles(thisModuleFileEndpoint)
+    sendDummyFiles(thisModuleFileEndpoint, host)
 
 if __name__ == '__main__':
   runMe()
