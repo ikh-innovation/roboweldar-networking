@@ -23,7 +23,6 @@ export default class Augmented {
     };
 
     this.scene = new Three.Scene();
-
     this.camera =
       new Three.PerspectiveCamera(
         75,
@@ -39,11 +38,15 @@ export default class Augmented {
 
     const ambientLight =
       new Three.AmbientLight( 0xcccccc, 1 );
+    const hemiLight = new Three.HemisphereLight( 0xffffbb, 0x080820, 1 );
 
-    const dirLight = new Three.DirectionalLight(0xffffff, 5);
-
-    this.scene.add( dirLight );
+    this.camera.position.x = 5;
+    this.camera.position.y = 5;
+    this.camera.position.z = 5;
+    this.camera.rotation.set( Math.PI / 2, 0, 0 );
     this.scene.add( ambientLight );
+    this.scene.add( hemiLight );
+
 
     this.controls =
       new OrbitControls(
@@ -51,7 +54,6 @@ export default class Augmented {
         rendererDOM
       );
 
-    //this.controls.autoRotate = true;
 
     this.controls.enableDamping = true;
     this.controls.dampingFactor = 0.05 ;
@@ -65,7 +67,6 @@ export default class Augmented {
     rendererDOM.style.border="5px solid black";
 
     this.renderer.setClearColor( 0xFFFAFA, 1 );
-    this.camera.position.z = 25;
 
     window.addEventListener( 'resize', () => {
       this.camera.aspect =
@@ -77,6 +78,7 @@ export default class Augmented {
       );
     }, false );
 
+    this.initGroundPlane();
     animate();
   }
 
@@ -113,56 +115,20 @@ export default class Augmented {
     );
   }
 
-  loadObj( properties ) {
-    const {
-      mtl: mtlPath,
-      obj: objPath,
-      hostname,
-      port,
-      endpoint
-    } = properties;
-
-    const meshFilesPath =
-      `http://${hostname}:${port}/${endpoint}/`;
-
-    const objLoader = new OBJLoader();
-    const mtlLoader = new MTLLoader();
-
-    objLoader.setPath( meshFilesPath );
-    mtlLoader.setPath( meshFilesPath );
-    mtlLoader.setMaterialOptions( { invertTrProperty: true } )
-    mtlLoader.load(
-      mtlPath,
-      ( materials ) => {
-        materials.preload();
-        objLoader.setMaterials( materials );
-        objLoad(
-          objLoader,
-          objPath,
-          this.scene
-        );
-        this.renderer.domElement.style.visibility =
-          'visible';
-      }
-    );
+  initGroundPlane() {
+    const geometry = new Three.PlaneGeometry( 10, 10, 32 );
+    const material =
+      new Three.MeshBasicMaterial(
+        {
+          color: 0x44ABDA,
+          side: Three.DoubleSide
+        }
+      );
+    const plane = new Three.Mesh( geometry, material );
+    plane.position.y = - 0.5;
+    plane.rotation.set( Math.PI / 2, 0, 0 );
+    this.scene.add( plane );
   }
-}
-
-function objLoad( objLoader, objPath, scene ) {
-  objLoader.load(
-    objPath,
-    ( object ) => {
-      //object.scale.set( 5, 5, 5);
-      object.rotation.set( Math.PI / 2, 0, 0 );
-      scene.add( object );
-    },
-    ( xhr ) => {
-      onLoadProgress( xhr );
-    },
-    ( error ) => {
-      onLoadError( error );
-    }
-  );
 }
 
 function onLoadProgress( xhr ) {
