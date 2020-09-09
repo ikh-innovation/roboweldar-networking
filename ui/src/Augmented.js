@@ -101,7 +101,10 @@ export default class Augmented {
 
     const gltfLoader = new GLTFLoader();
     const existingObject = this.scene.getObjectByName('gltfModel');
-    this.scene.remove( existingObject );
+    if ( existingObject ) {
+      this.scene.remove( existingObject );
+      this.renderer.renderLists.dispose();
+    }
     gltfLoader.load(
       filesPath,
       ( gltf ) => {
@@ -110,7 +113,7 @@ export default class Augmented {
         obj.name = 'gltfModel';
         this.scene.add( gltf.scene );
         this.renderer.domElement.style.visibility =
-                  'visible';
+          'visible';
         completionCallback();
       },
       ( xhr ) => {
