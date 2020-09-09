@@ -64,9 +64,8 @@ export default class Application extends React.Component {
       <Dialog
         fullScreen={false}
         open={this.state.modalOpen}
-//         onClose={handleClose}
         aria-labelledby="responsive-dialog-title"
-      > 
+      >
         <DialogTitle> Loading Mesh </DialogTitle>
         <DialogContent style={{height:'6em',width:'8em'}}>
           <CircularProgress style={{display: 'block',margin:'auto',height:'4em',width:'4em'}} variant="static" value={ this.state.xhrLoading } />

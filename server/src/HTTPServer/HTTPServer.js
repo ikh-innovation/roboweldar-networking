@@ -118,15 +118,15 @@ export class HTTPServer {
         req.files.forEach( ( file ) => {
           if ( file.originalname.match(/.obj/i) )
           obj2gltf(`${file.destination}/${file.originalname}`)
-          .then( (gltf) => {
+          .then( async (gltf) => {
             const data = Buffer.from(JSON.stringify(gltf));
-            fs.writeFileSync(`${file.destination}/model.gltf`, data);
+            await fs.writeFileSync(`${file.destination}/model.gltf`, data);
+            callback( req, res );
           });
         });
         res.json(
           { 'message': 'cache point cloud page hit' }
         );
-        callback( req, res );
       }
     );
   }

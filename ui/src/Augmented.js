@@ -80,6 +80,12 @@ export default class Augmented {
 
     this.initGroundPlane();
     animate();
+//     this.loadGLTF({
+//       gltf: 'model.gltf',
+//       hostname: 'localhost',
+//       port: '3000',
+//       endpoint: 'mesh'
+//     } , () => {}, () => {})
   }
 
   loadGLTF( properties, xhrCallback, completionCallback ) {
@@ -138,5 +144,5 @@ function onLoadProgress( xhr ) {
 }
 
 function onLoadError( error ) {
-  console.log( `Err: ${ error }` );
+  console.log( error );
 }
