@@ -100,13 +100,15 @@ export default class Augmented {
       `http://${hostname}:${port}/${endpoint}/${gltfPath}`;
 
     const gltfLoader = new GLTFLoader();
-    const scene = this.scene;
+    const existingObject = this.scene.getObjectByName('gltfModel');
+    this.scene.remove( existingObject );
     gltfLoader.load(
       filesPath,
       ( gltf ) => {
         const obj = gltf.scene;
         obj.rotation.set( Math.PI, 0, 0 );
-        scene.add( gltf.scene );
+        obj.name = 'gltfModel';
+        this.scene.add( gltf.scene );
         this.renderer.domElement.style.visibility =
                   'visible';
         completionCallback();
