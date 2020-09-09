@@ -48,10 +48,12 @@ export default class Application extends React.Component {
 
     properties.wsCli.overloadOnMessage( ( message ) => {
       const parsed = JSON.parse(message.data);
-      if ( parsed.message === 'pc_complete' )
+      if ( parsed.message === 'pc_complete' ) {
         this.fetchImageNames()
-      if ( parsed.message === 'sfm_complete' )
+      }
+      if ( parsed.message === 'sfm_complete' ) {
         this.fetchGLTF()
+      }
       if ( parsed.pcStatus ) this.setState( { pcStatus: parsed.pcStatus } );
       if ( parsed.sfmStatus ) this.setState( { sfmStatus: parsed.sfmStatus } );
     });
@@ -177,16 +179,16 @@ export default class Application extends React.Component {
       >
         { this.state.tabIndex === 0 && 
           (
-          <Box >
-            { this.reconstructionButtons( args.hostname ) }
-          </Box>
-          ) 
+            <Box >
+              { this.loadingBars() }
+            </Box>
+          )
         }
-        { this.state.tabIndex !== 0 && 
+        { this.state.tabIndex !== 0 &&
           (
           <Box >
           </Box>
-          ) 
+          )
         }
         { this.renderImages() }
         { this.renderLoadingCircle() }
@@ -194,35 +196,96 @@ export default class Application extends React.Component {
     );
   }
 
-  reconstructionLoadingBars() {
+  photoCaptureLoadingBar() {
+    const wrapperStyle = {
+      visibility: 'hidden',
+      margin: 'auto',
+      marginTop: '1em',
+      width: '40%'
+    }
+    const barStyle = {
+      height: '2em'
+    }
+
+    const typoStyle = {
+      backgroundColor: '#e3dfd5'
+    }
+
     return(
-      <Fragment>
-        <Typography variant='body1' component='p' > Photo Capture </Typography>
-        <LinearProgressWithLabel value={this.state.pcStatus} />
-        <Typography variant='body1' component='p' > SfM </Typography>
-        <LinearProgressWithLabel value={this.state.sfmStatus} />
-      </Fragment>
+      <div style={ wrapperStyle } id='pcLoadingBar'>
+        <Typography variant='body1' component='div' align='center' style={ typoStyle }>
+          Photo Capture
+          <span style={{color:'red'}}> { this.state.pcStatus }% </span>
+        </Typography>
+        <LinearProgress variant='determinate' color='secondary' value={this.state.pcStatus} style={ barStyle } />
+      </div>
     )
   }
-  reconstructionButtons( hostname ) {
-    return (
-      <Fragment>
-        <div>
-          <Button variant="outlined"
-            color="primary"
-            onClick={ () => { sendPCStartSignal( hostname) } }
-          >
-            Start
-          </Button>
-          <Button variant="outlined"
-            color="secondary"
-            onClick={ () => { sendSfMStopSignal( hostname) } }
-          >
-            Stop
-          </Button>
-        </div>
-        { this.reconstructionLoadingBars() }
-      </Fragment>
+
+  sfmLoadingBar() {
+    const wrapperStyle = {
+      visibility: 'hidden',
+      margin: 'auto',
+      marginTop: '1em',
+      width: '40%'
+    }
+    const barStyle = {
+      height: '2em'
+    }
+
+    const typoStyle = {
+      backgroundColor: '#e3dfd5'
+    }
+
+    return(
+      <div style={ wrapperStyle } id='sfmLoadingBar'>
+        <Typography variant='body1' component='div' align='center' style={ typoStyle }>
+          Structure from Motion
+          <span style={{color:'red'}}> { this.state.sfmStatus }% </span>
+        </Typography>
+        <LinearProgress color='secondary' variant='determinate' value={this.state.sfmStatus} style={ barStyle } />
+      </div>
+    )
+  }
+
+  loadingBars() {
+    const barsWrapper = {
+      marginTop: '2em',
+      marginBottom: '2em'
+    }
+
+    return(
+      <div style={ barsWrapper } >
+        { this.photoCaptureLoadingBar() }
+        { this.sfmLoadingBar() }
+      </div>
+    )
+  }
+
+
+  sendPCStartSignal( hostname ) {
+    document.getElementById('pcLoadingBar').style.visibility = 'visible';
+    document.getElementById('sfmLoadingBar').style.visibility = 'visible';
+    fetch(
+      `http://${ hostname }:3000/start_photo_capture`,
+      {
+          mode: 'cors',
+          headers: {
+            'Access-Control-Allow-Origin': '*'
+          }
+      }
+    );
+  }
+
+  sendSfMStopSignal( hostname ) {
+    fetch(
+      `http://${ hostname }:3000/stop_sfm`,
+      {
+        mode: 'cors',
+        headers: {
+          'Access-Control-Allow-Origin': '*'
+        }
+      }
     );
   }
 
@@ -234,9 +297,13 @@ export default class Application extends React.Component {
             onChange={ (e, v) => { this.handleChange(e, v) } }
             aria-label="main tabs"
           >
-            <Tab label="3D Reconstruction" { ...a11yProps(0) } />
-            <Tab label="Item Two" { ...a11yProps(1) } />
-            <Tab label="Item Three" { ...a11yProps(2) } />
+            <Tab label="3D Reconstruction" 
+              { ...a11yProps(0) } 
+              onClick={ () => {
+                this.sendPCStartSignal( this.hostname )
+              }
+              }
+            />
           </Tabs>
         </AppBar>
         {
@@ -272,30 +339,6 @@ LinearProgressWithLabel.propTypes = {
    */
   value: PropTypes.number.isRequired,
 };
-
-function sendPCStartSignal(hostname) {
-  fetch(
-    `http://${hostname}:3000/start_photo_capture`,
-     {
-        mode: 'cors',
-        headers: {
-          'Access-Control-Allow-Origin': '*'
-        }
-     }
-   );
-}
-
-function sendSfMStopSignal(hostname) {
-  fetch(
-    `http://${hostname}:3000/stop_sfm`,
-    {
-      mode: 'cors',
-      headers: {
-        'Access-Control-Allow-Origin': '*'
-      }
-    }
-  );
-}
 
 function a11yProps( index ) {
   return {

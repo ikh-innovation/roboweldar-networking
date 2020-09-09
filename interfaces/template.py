@@ -1,6 +1,6 @@
 # 'images' and 'meshFiles' folders
 #   are needed alongside this script
-# args: 
+# args:
 #   localhost -> server hostname
 #   ws/http -> ws (transmit data) or
 #     http (post images)
@@ -52,7 +52,7 @@ def sendDummyFiles(endpoint, host):
 def sendMesh(fName):
   http_client.uploadMesh('http://' + host + ':' + httpPort + '/cache_mesh', fName)
 
-def getImages():
+def getImages( host ):
   images = http_client.getImageNames( 'http://' + host + ':' + httpPort + '/' + 'image_names' )
   for image in images:
     url = 'http://' + host + ':' + httPort + '/serve_image?name=' + image

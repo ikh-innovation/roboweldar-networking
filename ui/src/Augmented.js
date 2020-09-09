@@ -40,9 +40,9 @@ export default class Augmented {
       new Three.AmbientLight( 0xcccccc, 1 );
     const hemiLight = new Three.HemisphereLight( 0xffffbb, 0x080820, 1 );
 
-    this.camera.position.x = 5;
-    this.camera.position.y = 5;
-    this.camera.position.z = 5;
+    this.camera.position.x = 2;
+    this.camera.position.y = 2;
+    this.camera.position.z = 2;
     this.camera.rotation.set( Math.PI / 2, 0, 0 );
     this.scene.add( ambientLight );
     this.scene.add( hemiLight );
