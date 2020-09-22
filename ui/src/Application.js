@@ -128,16 +128,18 @@ export default class Application extends React.Component {
       ( response ) => {
         if ( response.status === 200 )
           response.json().then( ( imageNames ) => {
-            const paths =
-              imageNames.map( ( name ) => {
+            const paths = imageNames.map( ( name ) => {
                 return `${ serveImagesURL }?${queryKey}=${ name }`
               });
-            this.setState({
-              imagePaths: paths
-            })
-            this.setState( {
-              pcStatus: 100
-            } );
+            var path = require('path');
+            var EXTENSION = '.jpeg';
+            var targetFiles = paths.filter(function(file) {
+              return path.extname(file).toLowerCase() === EXTENSION;
+          });
+            
+
+            this.setState({imagePaths: targetFiles})
+            this.setState( {pcStatus: 100} );
           })
       }
     )
