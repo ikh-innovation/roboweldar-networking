@@ -1,4 +1,4 @@
-# 'images' and 'meshFiles' folders
+# 'images' and 'mesh' folders
 #   are needed alongside this script
 # args:
 #   localhost -> server hostname
@@ -46,8 +46,8 @@ def sendDummyFiles(endpoint, host):
         filesNames = listdir('./images')
         files = map(lambda fileName: './images/' + fileName, filesNames)
     elif (endpoint == 'cache_mesh'):
-        filesNames = listdir('./meshFiles')
-        files = map(lambda fileName: './meshFiles/' + fileName, filesNames)
+        filesNames = listdir('./mesh')
+        files = map(lambda fileName: './mesh/' + fileName, filesNames)
     http_client.send_images('http://' + host + ':' + httpPort + '/' + endpoint, files)
 
 
