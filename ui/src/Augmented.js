@@ -37,8 +37,8 @@ export default class Augmented {
       new Three.WebGLRenderer( { canvas: rendererDOM } );
 
     const ambientLight =
-      new Three.AmbientLight( 0xcccccc, 1 );
-    const hemiLight = new Three.HemisphereLight( 0xffffbb, 0x080820, 1 );
+      new Three.AmbientLight( 0xf1f1f1, 1 );
+    const hemiLight = new Three.HemisphereLight( 0xf1f1f1, 0x080820, 1 );
 
     this.camera.position.x = 2;
     this.camera.position.y = 2;
@@ -109,7 +109,7 @@ export default class Augmented {
       filesPath,
       ( gltf ) => {
         const obj = gltf.scene;
-        obj.rotation.set( Math.PI, 0, 0 );
+        obj.rotation.set( 0, 0, 0 );
         obj.name = 'gltfModel';
         this.scene.add( gltf.scene );
         this.renderer.domElement.style.visibility =
@@ -136,8 +136,8 @@ export default class Augmented {
         }
       );
     const plane = new Three.Mesh( geometry, material );
-    plane.position.y = - 0.5;
-    plane.rotation.set( Math.PI / 2, 0, 0 );
+    plane.position.z = - 0.5;
+    plane.rotation.set( 0, 0, 0 );
     this.scene.add( plane );
   }
 }
