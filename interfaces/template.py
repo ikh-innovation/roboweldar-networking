@@ -68,6 +68,22 @@ def getImages(host, httpPort, path_to_dir):
             print("Writing image: {}".format(path_to_image))
             f.write(content)
 
+def getMeshFiles(host, httpPort, path_to_dir, mesh_files = ["transformed_mesh.obj","transformed_mesh.mtl","transformed_mesh_0.png"]):
+    files = http_client.getImageNames('http://' + str(host) + ':' + str(httpPort) + '/' + 'image_names')
+    print(files)
+    if (mesh_files not in files):
+        print("The files not uploaded yet!")
+        return False
+    
+    for _file in mesh_files:
+        url = 'http://' + str(host) + ':' + str(httpPort) + '/serve_image?name=' + str(_file)
+        content = http_client.downloadImage(url)
+        path_to_file = os.path.join(path_to_dir, str(_file))
+        with open(path_to_file, 'wb') as f:
+            print("Writing image: {}".format(path_to_file))
+            f.write(content)
+        return True
+    
 
 def runMe():
     if (len(sys.argv) < 4):
