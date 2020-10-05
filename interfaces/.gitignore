@@ -5,3 +5,4 @@
 *.jpg
 meshFiles/*
 images/*
+.venv
