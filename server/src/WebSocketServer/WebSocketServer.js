@@ -21,6 +21,8 @@ export class WebSocketServer {
         this.setPhotoCaptureClient(client);
       else if (clientPath === "sfm" && !this.sfmClient)
         this.setSfMClient(client);
+      else if (clientPath === "weld_seam_detection" && !this.wsdClient)
+        this.setWeldSeamDetectionClient(client);
       else if (clientPath === "ui") this.addUIClient(client);
       else client.close();
     });
@@ -80,6 +82,24 @@ export class WebSocketServer {
       this.sfmClient = undefined;
     });
     this.sfmClient = client;
+  }
+
+  setWeldSeamDetectionClient(client) {
+    client.on("message", (message) => {
+      try {
+        const parsedMessage = JSON.parse(message);
+        if (parsedMessage.status) {
+          this.weldSeamDetectionStatus = parsedMessage.status;
+          this.transmitStatus(this.weldSeamDetectionStatus);
+        }
+      } catch (exception) {
+        console.log(exception);
+      }
+    });
+    client.on("close", () => {
+      this.wsdClient = undefined;
+    });
+    this.wsdClient = client;
   }
 
   sendWSClient(client, message) {

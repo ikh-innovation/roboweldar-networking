@@ -9,6 +9,7 @@
 #   python3 template.py localhost ws sfm
 #   python2 template.py localhost http cache_images
 #   python2 template.py localhost http cache_mesh
+# TODO: Add template for using cache_trajectory
 
 import ws_client, http_client, json, sys, threading, time
 from os import listdir

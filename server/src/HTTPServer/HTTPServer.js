@@ -6,25 +6,26 @@ import cors from "cors";
 
 export class HTTPServer {
   constructor(properties) {
-    const { port, imagesPath, meshPath } = properties;
+    const { port, imagesPath, meshPath, weldingtrajPath } = properties;
 
     this.server = express();
     this.server.use(cors());
     this.server.listen(port);
-    this.initFiles(imagesPath, meshPath);
+    this.initFiles(imagesPath, meshPath, weldingtrajPath);
   }
 
-  initFiles(imagesPath, meshPath) {
+  initFiles(imagesPath, meshPath, weldingtrajPath) {
     this.imageNamesServingEndpoint();
 
-    this.initFileStorage(imagesPath, meshPath);
+    this.initFileStorage(imagesPath, meshPath, weldingtrajPath);
 
-    this.initFileServing(imagesPath, meshPath);
+    this.initFileServing(imagesPath, meshPath, weldingtrajPath);
   }
 
-  initFileServing(imagePath, meshPath) {
+  initFileServing(imagePath, meshPath, weldingtrajPath) {
     this.server.use("/images", express.static(imagePath));
     this.server.use("/mesh", express.static(meshPath));
+    this.server.use("/annotated_mesh", express.static(weldingtrajPath));
     this.imageServingEndpoint(imagePath);
   }
 
@@ -36,7 +37,7 @@ export class HTTPServer {
     });
   }
 
-  initFileStorage(imagesPath, meshPath) {
+  initFileStorage(imagesPath, meshPath, weldingtrajPath) {
     const imageStorage = multer.diskStorage({
       destination: imagesPath,
       filename: (req, file, callback) => {
@@ -49,8 +50,17 @@ export class HTTPServer {
         callback(null, file.originalname);
       },
     });
+
+    const trajectoryStorage = multer.diskStorage({
+      destination: weldingtrajPath,
+      filename: (req, file, callback) => {
+        callback(null, file.originalname);
+      },
+    });
+
     this.imageUploader = multer({ storage: imageStorage });
     this.pcUploader = multer({ storage: pcStorage });
+    this.trajectoryUploader = multer({ storage: trajectoryStorage });
   }
 
   /* add try/catch or validation */
@@ -86,12 +96,45 @@ export class HTTPServer {
     );
   }
 
+  weldSeamDetectionEndpoint(callback) {
+    this.server.post(
+      "/cache_annotated_mesh",
+      this.trajectoryUploader.array("files"),
+      (req, res) => {
+        req.files.forEach((file) => {
+          if (file.originalname.match(/.obj/i))
+            obj2gltf(`${file.destination}/${file.originalname}`).then(
+              async (gltf) => {
+                const data = Buffer.from(JSON.stringify(gltf));
+                await fs.writeFileSync(`${file.destination}/annotated_model.gltf`, data);
+                callback(req, res);
+              }
+            );
+        });
+        res.json({ message: "cache annotated point cloud page hit" });
+      }
+    );
+  }
+
   imageNamesServingEndpoint() {
     this.server.get("/image_names", (req, res) => {
       let fileNames = [];
       fs.readdir("./uploads/images/", (err, files) => {
         if (err) {
           res.json({ message: "error acquiring image names" });
+          return;
+        }
+        res.json(files);
+      });
+    });
+  }
+
+  weldingTrajectoryServingEndpoint() {
+    this.server.get("/welding_trajectory", (req, res) => {
+      let fileNames = [];
+      fs.readdir("./uploads/welding_trajectory/", (err, files) => {
+        if (err) {
+          res.json({ message: "error acquiring trajectory file names" });
           return;
         }
         res.json(files);

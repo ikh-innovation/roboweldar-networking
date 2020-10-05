@@ -8,6 +8,7 @@ function runMe() {
     port: Config.httpPort,
     imagesPath: Config.imageUploadPath,
     meshPath: Config.meshUploadPath,
+    weldingtrajPath: Config.weldingTrajUploadPath,
   };
   const wsProperties = {
     port: Config.wsPort,
@@ -77,6 +78,25 @@ function runMe() {
           wsServer.sendWSClient(
             client,
             JSON.stringify({ message: "sfm_complete" })
+          );
+        }
+      });
+    }
+  });
+
+  httpServer.weldSeamDetectionEndpoint((req, res) => {
+    if (wsServer.wsdClient) {
+      wsServer.sendWSClient(
+        wsServer.wsdClient,
+        JSON.stringify({ message: "start" })
+      );
+    }
+    if (clients) {
+      clients.forEach((client) => {
+        if (client.path === "ui") {
+          wsServer.sendWSClient(
+            client,
+            JSON.stringify({ message: "weld_seam_detection_complete" })
           );
         }
       });
