@@ -23,7 +23,7 @@ def get_filenames(link):
         print('request not served correctly', r)
 
 
-def download_image(link):
+def download_file(link):
     r = requests.get(link)
     if (r.status_code == 200):
         return r.content
