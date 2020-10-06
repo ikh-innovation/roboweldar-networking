@@ -16,6 +16,7 @@ export class HTTPServer {
 
   initFiles(imagesPath, meshPath, weldingtrajPath) {
     this.imageNamesServingEndpoint();
+    this.meshFilesServingEndpoint();
 
     this.initFileStorage(imagesPath, meshPath, weldingtrajPath);
 
@@ -23,12 +24,15 @@ export class HTTPServer {
   }
 
   initFileServing(imagePath, meshPath, weldingtrajPath) {
-    this.server.use("/images", express.static(imagePath));
+    this.server.use("/images", express.static(imagePath)); // e.g. app.use(express.static('public'))  serves files in a directory named public
     this.server.use("/mesh", express.static(meshPath));
-    this.server.use("/annotated_mesh", express.static(weldingtrajPath));
+    this.server.use("/welding_trajectory", express.static(weldingtrajPath));
     this.imageServingEndpoint(imagePath);
+    this.meshServingEndpoint(meshPath);
+
   }
 
+  // TODO: make this more generic to serve files
   imageServingEndpoint(imagePath) {
     this.server.get("/serve_image", (req, res) => {
       const imageName = req.query.name;
@@ -37,7 +41,16 @@ export class HTTPServer {
     });
   }
 
+  meshServingEndpoint(meshPath) {
+    this.server.get("/serve_mesh_files", (req, res) => {
+      const imageName = req.query.name;
+      if (imageName) res.sendFile(`${meshPath}/${fileName}`, { root: "./" });
+      else res.json({ message: "file not found" });
+    });
+  }
+
   initFileStorage(imagesPath, meshPath, weldingtrajPath) {
+    // returns a StorageEngine instance configured to store files on the local file system.
     const imageStorage = multer.diskStorage({
       destination: imagesPath,
       filename: (req, file, callback) => {
@@ -58,12 +71,15 @@ export class HTTPServer {
       },
     });
 
-    this.imageUploader = multer({ storage: imageStorage });
+    // Multer is a node.js middleware for handling multipart/form-data, which is primarily used for uploading files.
+    this.imageUploader = multer({ storage: imageStorage }); // Multer instances
     this.pcUploader = multer({ storage: pcStorage });
     this.trajectoryUploader = multer({ storage: trajectoryStorage });
   }
 
   /* add try/catch or validation */
+
+  // POST is the HTTP method that is used to send data to a receiving web application.
   cacheImagesEndpoint(callback) {
     this.server.post(
       "/cache_images",
@@ -98,20 +114,11 @@ export class HTTPServer {
 
   weldSeamDetectionEndpoint(callback) {
     this.server.post(
-      "/cache_annotated_mesh",
+      "/cache_welding_trajectory",
       this.trajectoryUploader.array("files"),
       (req, res) => {
-        req.files.forEach((file) => {
-          if (file.originalname.match(/.obj/i))
-            obj2gltf(`${file.destination}/${file.originalname}`).then(
-              async (gltf) => {
-                const data = Buffer.from(JSON.stringify(gltf));
-                await fs.writeFileSync(`${file.destination}/annotated_model.gltf`, data);
-                callback(req, res);
-              }
-            );
-        });
-        res.json({ message: "cache annotated point cloud page hit" });
+        callback(req, res);
+        res.json({ message: "cache welding trajectory page hit" });
       }
     );
   }
@@ -122,6 +129,19 @@ export class HTTPServer {
       fs.readdir("./uploads/images/", (err, files) => {
         if (err) {
           res.json({ message: "error acquiring image names" });
+          return;
+        }
+        res.json(files);
+      });
+    });
+  }
+
+  meshFilesServingEndpoint() {
+    this.server.get("/mesh_filenames", (req, res) => {
+      let fileNames = [];
+      fs.readdir("./uploads/mesh/", (err, files) => {
+        if (err) {
+          res.json({ message: "error acquiring mesh file names" });
           return;
         }
         res.json(files);
@@ -146,6 +166,13 @@ export class HTTPServer {
     this.server.get("/start_photo_capture", (req, res) => {
       callback(req, res);
       res.json({ message: "start_photo_capture page hit" });
+    });
+  }
+
+  weldingSeamDetectionStartEndpoint(callback) {
+    this.server.get("/start_welding_seam_detection", (req, res) => {
+      callback(req, res);
+      res.json({ message: "start_welding_seam_detection page hit" });
     });
   }
 

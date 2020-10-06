@@ -71,7 +71,11 @@ function runMe() {
     }
   });
 
-  httpServer.cacheMeshEndpoint((req, res) => {
+
+  //  runs the method defined in HTTPServer.js with a callback that signals 
+  // "sfm_complete" to the UI after the mesh uploading from the client is complete. 
+
+  httpServer.cacheMeshEndpoint((req, res) => { 
     if (clients) {
       clients.forEach((client) => {
         if (client.path === "ui") {
@@ -83,6 +87,10 @@ function runMe() {
       });
     }
   });
+
+
+  //  runs the method defined in HTTPServer.js with a callback that signals 
+  // "weld_seam_detection_complete" to the UI after the trajectory uploading from the client is complete. 
 
   httpServer.weldSeamDetectionEndpoint((req, res) => {
     if (wsServer.wsdClient) {
