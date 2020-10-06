@@ -87,7 +87,8 @@ def get_mesh_files(host, httpPort, path_to_dir, mesh_files):
         with open(path_to_file, 'wb') as f:
             print("Writing mesh: {}".format(path_to_file))
             f.write(content)
-        return True
+
+    return True
 
 
 def runMe():
