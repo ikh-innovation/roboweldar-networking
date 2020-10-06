@@ -41,7 +41,7 @@ def connectWS(endpoint, host):
 
 # endpoint either 'cache_images'
 # or 'cache_mesh'
-def sendDummyFiles(endpoint, host):
+def send_dummy_files(endpoint, host):
     # dummy data, files with those names should exist in this dir
     if (endpoint == 'cache_images'):
         filesNames = listdir('./images')
@@ -54,39 +54,41 @@ def sendDummyFiles(endpoint, host):
 
 # obj upload example (mesh)
 # e.g. sendMesh('mesh.obj')
-def sendMesh(fName):
-    http_client.uploadMesh('http://' + host + ':' + httpPort + '/cache_mesh', fName)
+def send_mesh(fName):
+    http_client.upload_mesh('http://' + host + ':' + httpPort + '/cache_mesh', fName)
 
 
-def getImages(host, httpPort, path_to_dir):
-    images = http_client.getImageNames('http://' + str(host) + ':' + str(httpPort) + '/' + 'image_names')
+def get_images(host, httpPort, path_to_dir):
+    images = http_client.get_filenames('http://' + str(host) + ':' + str(httpPort) + '/' + 'image_names')
     print(images)
     for image in images:
         url = 'http://' + str(host) + ':' + str(httpPort) + '/serve_image?name=' + str(image)
-        content = http_client.downloadImage(url)
+        content = http_client.download_image(url)
         path_to_image = os.path.join(path_to_dir, str(image))
         with open(path_to_image, 'wb') as f:
             print("Writing image: {}".format(path_to_image))
             f.write(content)
 
-def getMeshFiles(host, httpPort, path_to_dir, mesh_files = ["transformed_mesh.obj","transformed_mesh.mtl","transformed_mesh_0.png"]):
-    files = http_client.getImageNames('http://' + str(host) + ':' + str(httpPort) + '/' + 'mesh_filenames')
+
+def get_mesh_files(host, httpPort, path_to_dir,
+                   mesh_files=["transformed_mesh.obj", "transformed_mesh.mtl", "transformed_mesh_0.png"]):
+    files = http_client.get_filenames('http://' + str(host) + ':' + str(httpPort) + '/' + 'mesh_filenames')
     print(files)
     try:
         [files.index(file) for file in mesh_files]
     except ValueError as err:
         print("Not all files are uploaded yet!")
         return False
-    
+
     for _file in mesh_files:
         url = 'http://' + str(host) + ':' + str(httpPort) + '/serve_image?name=' + str(_file)
-        content = http_client.downloadImage(url)
+        content = http_client.download_image(url)
         path_to_file = os.path.join(path_to_dir, str(_file))
         with open(path_to_file, 'wb') as f:
             print("Writing image: {}".format(path_to_file))
             f.write(content)
         return True
-    
+
 
 def runMe():
     if (len(sys.argv) < 4):
@@ -98,7 +100,7 @@ def runMe():
         connectWS(thisModuleHeader, host)
     elif (sys.argv[2] == 'http'):
         thisModuleFileEndpoint = sys.argv[3]
-        sendDummyFiles(thisModuleFileEndpoint, host)
+        send_dummy_files(thisModuleFileEndpoint, host)
 
 
 if __name__ == '__main__':
