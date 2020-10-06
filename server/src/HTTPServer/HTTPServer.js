@@ -43,8 +43,8 @@ export class HTTPServer {
 
   meshServingEndpoint(meshPath) {
     this.server.get("/serve_mesh_files", (req, res) => {
-      const imageName = req.query.name;
-      if (imageName) res.sendFile(`${meshPath}/${fileName}`, { root: "./" });
+      const fileName = req.query.name;
+      if (fileName) res.sendFile(`${meshPath}/${fileName}`, { root: "./" });
       else res.json({ message: "file not found" });
     });
   }
