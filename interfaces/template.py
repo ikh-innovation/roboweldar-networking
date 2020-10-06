@@ -49,7 +49,7 @@ def send_dummy_files(endpoint, host):
     elif endpoint == 'cache_mesh':
         filesNames = os.listdir('./mesh')
         files = map(lambda fileName: './mesh/' + fileName, filesNames)
-    http_client.send_images('http://' + host + ':' + httpPort + '/' + endpoint, files)
+    http_client.send_files('http://' + host + ':' + httpPort + '/' + endpoint, files)
 
 
 # obj upload example (mesh)

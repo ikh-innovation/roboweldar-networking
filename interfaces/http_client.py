@@ -5,10 +5,10 @@ import requests, json
 # host should be like "http://localhost:3000/cache_images
 # imagesPathArr like ["/path/to/image1", "path/to/image2", ...]
 # maybe change names to custom ones, e.g. file1.jpg
-def send_images(host, imagesPathArr):
+def send_files(host, file_path_array):
     files = []
-    for index, imagePath in enumerate(imagesPathArr):
-        openedFile = open(imagePath, 'rb')
+    for index, file_path in enumerate(file_path_array):
+        openedFile = open(file_path, 'rb')
         files.append(('files', (openedFile.name, openedFile)))
 
     r = requests.post(host, files=files)
