@@ -70,10 +70,12 @@ def getImages(host, httpPort, path_to_dir):
             f.write(content)
 
 def getMeshFiles(host, httpPort, path_to_dir, mesh_files = ["transformed_mesh.obj","transformed_mesh.mtl","transformed_mesh_0.png"]):
-    files = http_client.getImageNames('http://' + str(host) + ':' + str(httpPort) + '/' + 'image_names')
+    files = http_client.getImageNames('http://' + str(host) + ':' + str(httpPort) + '/' + 'mesh_filenames')
     print(files)
-    if (mesh_files not in files):
-        print("The files not uploaded yet!")
+    try:
+        [files.index(file) for file in mesh_files]
+    except ValueError as err:
+        print("Not all files are uploaded yet!")
         return False
     
     for _file in mesh_files:
