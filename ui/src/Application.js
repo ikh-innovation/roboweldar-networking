@@ -35,6 +35,7 @@ export default class Application extends React.Component {
       tabIndex: 0,
       imagePaths: [],
       pcStatus: 0,
+      wdsStatus: 0,
       sfmStatus: 0,
       xhrLoading: 0,
       modalOpen: false,
@@ -58,9 +59,12 @@ export default class Application extends React.Component {
       }
       if (parsed.message === "weld_seam_detection_complete") {
         // TODO: execute code after weld seam detection is complete
+        this.setState({wsdStatus: 100})
       }
       if (parsed.pcStatus) this.setState({ pcStatus: parsed.pcStatus });
       if (parsed.sfmStatus) this.setState({ sfmStatus: parsed.sfmStatus });
+      if (parsed.wsdStatus) this.setState({ wsdStatus: parsed.wsdStatus });
+
     });
   }
 
@@ -280,6 +284,43 @@ export default class Application extends React.Component {
       </div>
     );
   }
+
+  weldSeamDetectionLoadingBar() {
+    const wrapperStyle = {
+      visibility: "hidden",
+      margin: "auto",
+      marginTop: "1em",
+      width: "40%",
+    };
+    const barStyle = {
+      height: "2em",
+    };
+
+    const typoStyle = {
+      backgroundColor: "#e3dfd5",
+    };
+
+    return (
+      <div style={wrapperStyle} id="wsdLoadingBar">
+        <Typography
+          variant="body1"
+          component="div"
+          align="center"
+          style={typoStyle}
+        >
+          Weld Seam Detection
+          <span style={{ color: "red" }}> {this.state.wsdStatus}% </span>
+        </Typography>
+        <LinearProgress
+          variant="determinate"
+          color="secondary"
+          value={this.state.wsdStatus}
+          style={barStyle}
+        />
+      </div>
+    );
+  }
+
 
   sendPCStartSignal(hostname) {
     document.getElementById("pcLoadingBar").style.visibility = "visible";
