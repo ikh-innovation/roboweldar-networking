@@ -59,12 +59,11 @@ export default class Application extends React.Component {
       }
       if (parsed.message === "weld_seam_detection_complete") {
         // TODO: execute code after weld seam detection is complete
-        this.setState({wsdStatus: 100})
+        this.setState({ wsdStatus: 100 });
       }
       if (parsed.pcStatus) this.setState({ pcStatus: parsed.pcStatus });
       if (parsed.sfmStatus) this.setState({ sfmStatus: parsed.sfmStatus });
       if (parsed.wsdStatus) this.setState({ wsdStatus: parsed.wsdStatus });
-
     });
   }
 
@@ -181,7 +180,7 @@ export default class Application extends React.Component {
     });
   }
 
-  tabPanel(args) {
+  tabPanel3DReconstruction(args) {
     const { children, value, ...other } = args;
     return (
       <div
@@ -191,10 +190,32 @@ export default class Application extends React.Component {
         aria-labelledby={`simple-tab-${this.state.tabIndex}`}
         {...other}
       >
-        {this.state.tabIndex === 0 && <Box>{this.loadingBars()}</Box>}
+        {this.state.tabIndex === 0 && (
+          <Box>{this.loading3DReconstructionBars()}</Box>
+        )}
         {this.state.tabIndex !== 0 && <Box></Box>}
         {this.renderImages()}
         {this.renderLoadingCircle()}
+      </div>
+    );
+  }
+
+  tabPanelWeldSeamDetection(args) {
+    const { children, value, ...other } = args;
+    return (
+      <div
+        role="tabpanel"
+        hidden={value !== this.state.tabIndex}
+        id={`simple-tabpanel-${this.state.tabIndex}`}
+        aria-labelledby={`simple-tab-${this.state.tabIndex}`}
+        {...other}
+      >
+        {this.state.tabIndex === 1 && (
+          <Box>{this.loadingWeldSeamDetectionBars()}</Box>
+        )}
+        {this.state.tabIndex !== 1 && <Box></Box>}
+        {/* {this.renderImages()}
+        {this.renderLoadingCircle()} */}
       </div>
     );
   }
@@ -271,7 +292,7 @@ export default class Application extends React.Component {
     );
   }
 
-  loadingBars() {
+  loading3DReconstructionBars() {
     const barsWrapper = {
       marginTop: "2em",
       marginBottom: "2em",
@@ -321,6 +342,14 @@ export default class Application extends React.Component {
     );
   }
 
+  loadingWeldSeamDetectionBars() {
+    const barsWrapper = {
+      marginTop: "2em",
+      marginBottom: "2em",
+    };
+
+    return <div style={barsWrapper}>{this.weldSeamDetectionLoadingBar()}</div>;
+  }
 
   sendPCStartSignal(hostname) {
     document.getElementById("pcLoadingBar").style.visibility = "visible";
@@ -370,19 +399,28 @@ export default class Application extends React.Component {
                 this.sendPCStartSignal(this.hostname);
               }}
             />
+            />
             <Tab
               label="Weld Seam Detection"
-              {...a11yProps(0)}
+              {...a11yProps(1)}
               onClick={() => {
                 this.sendWSDStartSignal(this.hostname);
               }}
             />
           </Tabs>
         </AppBar>
-        {this.tabPanel({
+        
+        {this.tabPanel3DReconstruction({
           hostname: this.hostname,
           value: 0,
         })}
+
+{this.tabPanelWeldSeamDetection({
+          hostname: this.hostname,
+          value: 1,
+        })}
+        
+        
       </div>
     );
   }
