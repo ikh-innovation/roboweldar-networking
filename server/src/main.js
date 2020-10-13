@@ -34,6 +34,21 @@ function runMe() {
     }
   });
 
+  httpServer.weldingSeamDetectionStartEndpoint((req, res) => {
+    if (wsServer.wsdClient) {
+      wsServer.sendWSClient(wsServer.wsdClient, "init");
+    }
+    if (clients) {
+      clients.forEach((client) => {
+        if (client.path === "ui")
+          wsServer.sendWSClient(
+            client,
+            JSON.stringify({ message: "wsd_start" })
+          );
+      });
+    }
+  });
+
   httpServer.sfmStopEndpoint((req, res) => {
     if (wsServer.sfmClient) {
       wsServer.sendWSClient(

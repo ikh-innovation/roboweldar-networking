@@ -183,3 +183,5 @@ export class HTTPServer {
     });
   }
 }
+
+// TODO: create endpoint for welding progress

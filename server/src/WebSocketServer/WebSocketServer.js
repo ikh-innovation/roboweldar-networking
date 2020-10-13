@@ -9,6 +9,7 @@ export class WebSocketServer {
     this.setEvents();
     this.pcStatus = 0;
     this.sfmStatus = 0;
+    this.wsdStatus = 0;
   }
 
   setEvents() {
@@ -89,8 +90,8 @@ export class WebSocketServer {
       try {
         const parsedMessage = JSON.parse(message);
         if (parsedMessage.status) {
-          this.weldSeamDetectionStatus = parsedMessage.status;
-          this.transmitStatus(this.weldSeamDetectionStatus);
+          this.wsdStatus = parsedMessage.status;
+          this.transmitStatus(this.wsdStatus);
         }
       } catch (exception) {
         console.log(exception);
