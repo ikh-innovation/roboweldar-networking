@@ -35,7 +35,7 @@ export default class Application extends React.Component {
       tabIndex: 0,
       imagePaths: [],
       pcStatus: 0,
-      wdsStatus: 0,
+      wsdStatus: 0,
       sfmStatus: 0,
       xhrLoading: 0,
       modalOpen: false,
