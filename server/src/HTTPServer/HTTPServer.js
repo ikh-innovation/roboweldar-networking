@@ -80,6 +80,8 @@ export class HTTPServer {
   /* add try/catch or validation */
 
   // POST is the HTTP method that is used to send data to a receiving web application.
+  // When the images are uploaded by the photo capture client,
+  // the callback is executed (in this case the callback sends "pc_complete" to the UI and "start" to the SfM client)
   cacheImagesEndpoint(callback) {
     this.server.post(
       "/cache_images",
@@ -169,7 +171,7 @@ export class HTTPServer {
     });
   }
 
-  weldingSeamDetectionStartEndpoint(callback) {
+  weldSeamDetectionStartEndpoint(callback) {
     this.server.get("/start_welding_seam_detection", (req, res) => {
       callback(req, res);
       res.json({ message: "start_welding_seam_detection page hit" });
