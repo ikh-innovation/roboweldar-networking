@@ -34,9 +34,9 @@ export default class Application extends React.Component {
       value: 0,
       tabIndex: 0,
       imagePaths: [],
-      pcStatus: 0,
-      wsdStatus: 0,
-      sfmStatus: 0,
+      pcPercentageProgress: 0,
+      wsdPercentageProgress: 0,
+      sfmPercentageProgress: 0,
       xhrLoading: 0,
       modalOpen: false,
     };
@@ -220,7 +220,7 @@ export default class Application extends React.Component {
     );
   }
 
-  photoCaptureLoadingBar() {
+  genericLoadingBar(text, id, percentageProgress) {
     const wrapperStyle = {
       visibility: "hidden",
       margin: "auto",
@@ -236,61 +236,26 @@ export default class Application extends React.Component {
     };
 
     return (
-      <div style={wrapperStyle} id="pcLoadingBar">
+      <div style={wrapperStyle} id={id}>
         <Typography
           variant="body1"
           component="div"
           align="center"
           style={typoStyle}
         >
-          Photo Capture
-          <span style={{ color: "red" }}> {this.state.pcStatus}% </span>
+          { text }
+          <span style={{ color: "red" }}> {percentageProgress}% </span>
         </Typography>
         <LinearProgress
           variant="determinate"
           color="secondary"
-          value={this.state.pcStatus}
+          value={percentageProgress}
           style={barStyle}
         />
       </div>
     );
   }
 
-  sfmLoadingBar() {
-    const wrapperStyle = {
-      visibility: "hidden",
-      margin: "auto",
-      marginTop: "1em",
-      width: "40%",
-    };
-    const barStyle = {
-      height: "2em",
-    };
-
-    const typoStyle = {
-      backgroundColor: "#e3dfd5",
-    };
-
-    return (
-      <div style={wrapperStyle} id="sfmLoadingBar">
-        <Typography
-          variant="body1"
-          component="div"
-          align="center"
-          style={typoStyle}
-        >
-          Structure from Motion
-          <span style={{ color: "red" }}> {this.state.sfmStatus}% </span>
-        </Typography>
-        <LinearProgress
-          color="secondary"
-          variant="determinate"
-          value={this.state.sfmStatus}
-          style={barStyle}
-        />
-      </div>
-    );
-  }
 
   loading3DReconstructionBars() {
     const barsWrapper = {
@@ -300,44 +265,8 @@ export default class Application extends React.Component {
 
     return (
       <div style={barsWrapper}>
-        {this.photoCaptureLoadingBar()}
-        {this.sfmLoadingBar()}
-      </div>
-    );
-  }
-
-  weldSeamDetectionLoadingBar() {
-    const wrapperStyle = {
-      visibility: "hidden",
-      margin: "auto",
-      marginTop: "1em",
-      width: "40%",
-    };
-    const barStyle = {
-      height: "2em",
-    };
-
-    const typoStyle = {
-      backgroundColor: "#e3dfd5",
-    };
-
-    return (
-      <div style={wrapperStyle} id="wsdLoadingBar">
-        <Typography
-          variant="body1"
-          component="div"
-          align="center"
-          style={typoStyle}
-        >
-          Weld Seam Detection
-          <span style={{ color: "red" }}> {this.state.wsdStatus}% </span>
-        </Typography>
-        <LinearProgress
-          variant="determinate"
-          color="secondary"
-          value={this.state.wsdStatus}
-          style={barStyle}
-        />
+        {this.genericLoadingBar("Photo Capture", "pcLoadingBar", this.state.pcPercentageProgress)}
+        {this.genericLoadingBar("Structure from Motion", "sfmLoadingBar", this.state.sfmPercentageProgress)}
       </div>
     );
   }
@@ -348,7 +277,7 @@ export default class Application extends React.Component {
       marginBottom: "2em",
     };
 
-    return <div style={barsWrapper}>{this.weldSeamDetectionLoadingBar()}</div>;
+    return <div style={barsWrapper}>{this.genericLoadingBar("Weld Seam Detection", "wsdLoadingBar", this.state.wsdPercentageProgress)}</div>;
   }
 
   sendPCStartSignal(hostname) {
