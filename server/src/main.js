@@ -20,8 +20,8 @@ function runMe() {
   httpServer.webSocketServer = wsServer;
 
   httpServer.photoCaptureStartEndpoint((req, res) => {
-    if (wsServer.pcClient) {
-      wsServer.sendWSClient(wsServer.pcClient, "start_photo_capture");
+    if (wsServer.robotClient) {
+      wsServer.sendWSClient(wsServer.robotClient, "start_photo_capture");
     }
     if (clients) {
       clients.forEach((client) => {
@@ -41,7 +41,8 @@ function runMe() {
 
   httpServer.weldSeamDetectionStartEndpoint((req, res) => {
     if (wsServer.wsdClient) {
-      wsServer.sendWSClient(wsServer.wsdClient, "start_weld_seam_detection");
+      wsServer.sendWSClient(wsServer.wsdClient, JSON.stringify({ message: "start_weld_seam_detection"}));
+      console.log("WS message sent to wsdClient.")
     }
     if (clients) {
       clients.forEach((client) => {
@@ -75,23 +76,7 @@ function runMe() {
       });
     }
   });
-  // httpServer.sfmStopEndpoint((req, res) => {
-  //   if (wsServer.sfmClient) {
-  //     wsServer.sendWSClient(
-  //       wsServer.sfmClient,
-  //       JSON.stringify({ message: "stop" })
-  //     );
-  //   }
-  //   if (clients) {
-  //     clients.forEach((client) => {
-  //       if (client.path === "ui")
-  //         wsServer.sendWSClient(
-  //           client,
-  //           JSON.stringify({ message: "sfm_stop" })
-  //         );
-  //     });
-  //   }
-  // });
+
 
   httpServer.cacheImagesEndpoint((req, res) => {
     if (wsServer.sfmClient) {

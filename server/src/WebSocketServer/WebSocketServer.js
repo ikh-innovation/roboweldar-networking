@@ -18,12 +18,13 @@ export class WebSocketServer {
       const clientPath = req.url.substring(1);
       client.path = clientPath;
       client.id = uuid.v4();
-      if (clientPath === "photo_capture" && !this.pcClient)
-        this.setPhotoCaptureClient(client);
+      if (clientPath === "robot" && !this.robotClient)
+        this.setRobotClient(client);
       else if (clientPath === "sfm" && !this.sfmClient)
         this.setSfMClient(client);
-      else if (clientPath === "weld_seam_detection" && !this.wsdClient)
+      else if (clientPath === "weld_seam_detection" && !this.wsdClient){
         this.setWeldSeamDetectionClient(client);
+        console.log("Weld seam detection client set.");}
       else if (clientPath === "ui") this.addUIClient(client);
       else client.close();
     });
@@ -49,7 +50,7 @@ export class WebSocketServer {
     });
   }
 
-  setPhotoCaptureClient(client) {
+  setRobotClient(client) {
     client.on("message", (message) => {
       try {
         const parsedMessage = JSON.parse(message);
@@ -62,9 +63,9 @@ export class WebSocketServer {
       }
     });
     client.on("close", () => {
-      this.pcClient = undefined;
+      this.robotClient = undefined;
     });
-    this.pcClient = client;
+    this.robotClient = client;
   }
 
   setSfMClient(client) {
