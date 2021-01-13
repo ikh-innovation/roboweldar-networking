@@ -21,7 +21,7 @@ function runMe() {
 
   httpServer.photoCaptureStartEndpoint((req, res) => {
     if (wsServer.robotClient) {
-      wsServer.sendWSClient(wsServer.robotClient, "start_photo_capture");
+      wsServer.sendWSClient(wsServer.robotClient, "photo_capture_start");
     }
     if (clients) {
       clients.forEach((client) => {
@@ -77,6 +77,8 @@ function runMe() {
     }
   });
 
+  //  runs the method defined in HTTPServer.js with a callback that signals
+  // "sfm_complete" to the UI after the mesh uploading from the client is complete.
 
   httpServer.cacheImagesEndpoint((req, res) => {
     if (wsServer.sfmClient) {
@@ -97,10 +99,50 @@ function runMe() {
     }
   });
 
-  //  runs the method defined in HTTPServer.js with a callback that signals
-  // "sfm_complete" to the UI after the mesh uploading from the client is complete.
+  httpServer.cacheMeshEndpoint((req, res) => { 
+    if (clients) {
+      clients.forEach((client) => {
+        if (client.path === "ui") {
+          wsServer.sendWSClient(
+            client,
+            JSON.stringify({ message: "sfm_complete" })
+          );
+        }
+      });
+    }
+  });
 
-  httpServer.cacheMeshEndpoint((req, res) => {
+
+  //  runs the method defined in HTTPServer.js with a callback that signals
+  // "weld_seam_detection_complete" to the UI and "start" to the welding client after the trajectory uploading from the client is complete.
+
+  // startWeldingCallback = ;
+
+  httpServer.cacheWeldingTrajectoryEndpoint((req, res) => {
+    if (wsServer.robotClient) {
+      wsServer.sendWSClient(
+        wsServer.robotClient,
+        JSON.stringify({ message: "welding_start" })
+      );
+    }
+    if (clients) {
+      clients.forEach((client) => {
+        if (client.path === "ui") {
+          wsServer.sendWSClient(
+            client,
+            JSON.stringify({ message: "sfm_complete" })
+          );
+        }
+      });
+    }
+  });
+  httpServer.weldingStartEndpoint((req, res) => {
+    if (wsServer.robotClient) {
+      wsServer.sendWSClient(
+        wsServer.robotClient,
+        JSON.stringify({ message: "welding_start" })
+      );
+    }
     if (clients) {
       clients.forEach((client) => {
         if (client.path === "ui") {

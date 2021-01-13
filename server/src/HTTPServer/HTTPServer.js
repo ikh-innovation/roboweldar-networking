@@ -179,6 +179,14 @@ export class HTTPServer {
     });
   }
 
+
+  weldingStartEndpoint(callback) {
+    this.server.get("/start_welding", (req, res) => {
+      callback(req, res);
+      res.json({ message: "start_welding page hit" });
+    });
+  }
+
   sfmStopEndpoint(callback) {
     this.server.get("/stop_sfm", (req, res) => {
       callback(req, res);
