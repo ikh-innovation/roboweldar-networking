@@ -112,7 +112,7 @@ export class HTTPServer {
     );
   }
 
-  weldSeamDetectionEndpoint(callback) {
+  cacheWeldingTrajectoryEndpoint(callback) {
     this.server.post(
       "/cache_welding_trajectory",
       this.trajectoryUploader.array("files"),
@@ -173,6 +173,14 @@ export class HTTPServer {
     this.server.get("/start_welding_seam_detection", (req, res) => {
       callback(req, res);
       res.json({ message: "start_welding_seam_detection page hit" });
+    });
+  }
+
+
+  weldingStartEndpoint(callback) {
+    this.server.get("/start_welding", (req, res) => {
+      callback(req, res);
+      res.json({ message: "start_welding page hit" });
     });
   }
 

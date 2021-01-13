@@ -20,8 +20,8 @@ function runMe() {
   httpServer.webSocketServer = wsServer;
 
   httpServer.photoCaptureStartEndpoint((req, res) => {
-    if (wsServer.pcClient) {
-      wsServer.sendWSClient(wsServer.pcClient, "init");
+    if (wsServer.robotClient) {
+      wsServer.sendWSClient(wsServer.robotClient, "photo_capture_start");
     }
     if (clients) {
       clients.forEach((client) => {
@@ -29,24 +29,6 @@ function runMe() {
           wsServer.sendWSClient(
             client,
             JSON.stringify({ message: "pc_start" })
-          );
-      });
-    }
-  });
-
-  httpServer.sfmStopEndpoint((req, res) => {
-    if (wsServer.sfmClient) {
-      wsServer.sendWSClient(
-        wsServer.sfmClient,
-        JSON.stringify({ message: "stop" })
-      );
-    }
-    if (clients) {
-      clients.forEach((client) => {
-        if (client.path === "ui")
-          wsServer.sendWSClient(
-            client,
-            JSON.stringify({ message: "sfm_stop" })
           );
       });
     }
@@ -71,11 +53,10 @@ function runMe() {
     }
   });
 
+  //  runs the method defined in HTTPServer.js with a callback that signals
+  // "sfm_complete" to the UI after the mesh uploading from the client is complete.
 
-  //  runs the method defined in HTTPServer.js with a callback that signals 
-  // "sfm_complete" to the UI after the mesh uploading from the client is complete. 
-
-  httpServer.cacheMeshEndpoint((req, res) => { 
+  httpServer.cacheMeshEndpoint((req, res) => {
     if (clients) {
       clients.forEach((client) => {
         if (client.path === "ui") {
@@ -88,15 +69,14 @@ function runMe() {
     }
   });
 
+  //  runs the method defined in HTTPServer.js with a callback that signals
+  // "weld_seam_detection_complete" to the UI and "start" to the welding client after the trajectory uploading from the client is complete.
 
-  //  runs the method defined in HTTPServer.js with a callback that signals 
-  // "weld_seam_detection_complete" to the UI after the trajectory uploading from the client is complete. 
-
-  httpServer.weldSeamDetectionEndpoint((req, res) => {
-    if (wsServer.wsdClient) {
+  startWeldingCallback = (req, res) => {
+    if (wsServer.robotClient) {
       wsServer.sendWSClient(
-        wsServer.wsdClient,
-        JSON.stringify({ message: "start" })
+        wsServer.robotClient,
+        JSON.stringify({ message: "welding_start" })
       );
     }
     if (clients) {
@@ -109,7 +89,10 @@ function runMe() {
         }
       });
     }
-  });
+  };
+
+  httpServer.cacheWeldingTrajectoryEndpoint(startWeldingCallback);
+  httpServer.weldingStartEndpoint(startWeldingCallback);
 
   logger.success(`WebSocket server initialized, port: ${wsProperties.port}`);
   logger.success(`HTTP server initialized, port: ${httpProperties.port}`);

@@ -17,7 +17,7 @@ export class WebSocketServer {
       const clientPath = req.url.substring(1);
       client.path = clientPath;
       client.id = uuid.v4();
-      if (clientPath === "photo_capture" && !this.pcClient)
+      if (clientPath === "photo_capture" && !this.robotClient)
         this.setPhotoCaptureClient(client);
       else if (clientPath === "sfm" && !this.sfmClient)
         this.setSfMClient(client);
@@ -61,9 +61,9 @@ export class WebSocketServer {
       }
     });
     client.on("close", () => {
-      this.pcClient = undefined;
+      this.robotClient = undefined;
     });
-    this.pcClient = client;
+    this.robotClient = client;
   }
 
   setSfMClient(client) {
