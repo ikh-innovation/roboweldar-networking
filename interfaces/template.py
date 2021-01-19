@@ -91,6 +91,33 @@ def get_mesh_files(host, httpPort, path_to_dir, mesh_files):
     return True
 
 
+def get_trajectory_file(host, httpPort, path_to_dir, trajectory_file_name):
+    """ Get .npy trajectory file from Server
+        @param host: host IP - Type: string
+        @param httpPort: HTTP port - Type: string
+        @param path_to_dir: local path to save the trajectory file - Type: string
+        @param trajectory_file_name: name of .npy trajectory file - Type: string 
+    """
+    files = http_client.get_filenames('http://' + str(host) + ':' + str(httpPort) + '/' + 'welding_trajectory')
+    print(files)
+    try:
+        [files.index(file) for file in trajectory_file_name]
+    except ValueError as err:
+        print("Not all files are uploaded yet!")
+        return False
+
+    for _file in trajectory_file_name:
+        url = 'http://' + str(host) + ':' + str(httpPort) + '/serve_trajectory_files?name=' + str(_file)
+        content = http_client.download_file(url)
+        path_to_file = os.path.join(path_to_dir, str(_file))
+        with open(path_to_file, 'wb') as f:
+            print("Writing mesh: {}".format(path_to_file))
+            f.write(content)
+
+    return True
+
+
+
 def runMe():
     if len(sys.argv) < 4:
         print("wrong number of arguments")
