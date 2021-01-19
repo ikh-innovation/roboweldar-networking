@@ -58,9 +58,9 @@ export default class Application extends React.Component {
       if (parsed.message === "sfm_complete") {
         this.fetchGLTF();
       }
-      if (parsed.message === "weld_seam_detection_complete") {
+      if (parsed.message === "wsd_complete") {
         // TODO: execute code after weld seam detection is complete
-        this.setState({ wsdStatus: 100 });
+        this.setState({ wsdPercentageProgress: 100 });
       }
       if (parsed.pcStatus) this.setState({ pcPercentageProgress: parsed.pcStatus });
       if (parsed.sfmStatus) {
@@ -346,7 +346,7 @@ export default class Application extends React.Component {
                 this.sendPCStartSignal(this.hostname);
               }}
             />
-            />
+  
             <Tab
               label="Weld Seam Detection"
               {...a11yProps(1)}
