@@ -50,6 +50,14 @@ export class HTTPServer {
   }
   // TODO: Implement serve_trajectory_files
 
+  weldingTrajectoryServingEndpoint(weldingtrajPath) {
+    this.server.get("/serve_welding_trajectory_files", (req, res) => {
+      const fileName = req.query.name;
+      if (fileName) res.sendFile(`${weldingtrajPath}/${fileName}`, { root: "./" });
+      else res.json({ message: "file not found" });
+    });
+  }
+
   initFileStorage(imagesPath, meshPath, weldingtrajPath) {
     // returns a StorageEngine instance configured to store files on the local file system.
     const imageStorage = multer.diskStorage({
@@ -153,18 +161,19 @@ export class HTTPServer {
     });
   }
 
-  weldingTrajectoryServingEndpoint() {
-    this.server.get("/welding_trajectory", (req, res) => {
+  weldingTrajectoryFilesServingEndpoint() {
+    this.server.get("/welding_trajectory_filename", (req, res) => {
       let fileNames = [];
       fs.readdir("./uploads/welding_trajectory/", (err, files) => {
         if (err) {
-          res.json({ message: "error acquiring trajectory file names" });
+          res.json({ message: "error acquiring welding trajectory file names" });
           return;
         }
         res.json(files);
       });
     });
   }
+
 
   photoCaptureStartEndpoint(callback) {
     this.server.get("/start_photo_capture", (req, res) => {
