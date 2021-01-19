@@ -22,10 +22,10 @@ export class WebSocketServer {
         this.setRobotClient(client);
       else if (clientPath === "sfm" && !this.sfmClient)
         this.setSfMClient(client);
-      else if (clientPath === "weld_seam_detection" && !this.wsdClient){
+      else if (clientPath === "weld_seam_detection" && !this.wsdClient) {
         this.setWeldSeamDetectionClient(client);
-        console.log("Weld seam detection client set.");}
-      else if (clientPath === "ui") this.addUIClient(client);
+        console.log("Weld seam detection client set.");
+      } else if (clientPath === "ui") this.addUIClient(client);
       else client.close();
     });
   }
@@ -42,7 +42,16 @@ export class WebSocketServer {
 
   /* should be callback in main.js */
   transmitStatus(status) {
-    const key = status === this.pcStatus ? "pcStatus" : "sfmStatus";
+    let key = "";
+    if (status === this.pcStatus) {
+      key = "pcStatus";
+    }
+    if (status === this.sfmStatus) {
+      key = "sfmStatus";
+    }
+    if (status === this.wsdStatus) {
+      key = "wsdStatus";
+    }
     this.webSocketServer.clients.forEach((client) => {
       if (client.path === "ui") {
         this.sendWSClient(client, `{ \"${key}\" : ${status} }`);

@@ -129,7 +129,7 @@ export class HTTPServer {
       this.trajectoryUploader.array("files"),
       (req, res) => {
         callback(req, res);
-        res.json({ message: "cache welding trajectory page hit" })
+        res.json({ message: "cache welding trajectory page hit" });
         console.log("/cache_welding_trajectory accessed");
       }
     );

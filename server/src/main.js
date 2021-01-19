@@ -41,28 +41,35 @@ function runMe() {
 
   httpServer.weldSeamDetectionStartEndpoint((req, res) => {
     if (wsServer.wsdClient) {
-      wsServer.sendWSClient(wsServer.wsdClient, JSON.stringify({ message: "start_weld_seam_detection"}));
-      console.log("WS message sent to wsdClient.")
+      wsServer.sendWSClient(
+        wsServer.wsdClient,
+        JSON.stringify({ message: "start_weld_seam_detection" })
+      );
+      console.log("WS message sent to wsdClient.");
     }
     if (clients) {
       clients.forEach((client) => {
         if (client.path === "ui")
           wsServer.sendWSClient(
             client,
-            JSON.stringify({ message: "start_weld_seam_detection_message_sent" })
+            JSON.stringify({
+              message: "start_weld_seam_detection_message_sent",
+            })
           );
       });
     }
   });
 
   //  runs the method defined in HTTPServer.js with a callback that signals
-  // "weld seam upload complete / start welding" to the UI and "start" to the welding client after the weld trajectory uploading from the client is complete.
+  // "weld_seam_detection_complete" to the UI and "start" to the welding client after the trajectory uploading from the client is complete.
+
+  // startWeldingCallback = ;
 
   httpServer.cacheWeldingTrajectoryEndpoint((req, res) => {
-    if (wsServer.wsdClient) {
+    if (wsServer.robotClient) {
       wsServer.sendWSClient(
-        wsServer.weldingClient,
-        JSON.stringify({ message: "start_welding" })
+        wsServer.robotClient,
+        JSON.stringify({ message: "welding_start" })
       );
     }
     if (clients) {
@@ -70,7 +77,7 @@ function runMe() {
         if (client.path === "ui") {
           wsServer.sendWSClient(
             client,
-            JSON.stringify({ message: "weld seam upload complete / start welding" })
+            JSON.stringify({ message: "wsd_complete" })
           );
         }
       });
@@ -99,7 +106,7 @@ function runMe() {
     }
   });
 
-  httpServer.cacheMeshEndpoint((req, res) => { 
+  httpServer.cacheMeshEndpoint((req, res) => {
     if (clients) {
       clients.forEach((client) => {
         if (client.path === "ui") {
@@ -112,30 +119,6 @@ function runMe() {
     }
   });
 
-
-  //  runs the method defined in HTTPServer.js with a callback that signals
-  // "weld_seam_detection_complete" to the UI and "start" to the welding client after the trajectory uploading from the client is complete.
-
-  // startWeldingCallback = ;
-
-  httpServer.cacheWeldingTrajectoryEndpoint((req, res) => {
-    if (wsServer.robotClient) {
-      wsServer.sendWSClient(
-        wsServer.robotClient,
-        JSON.stringify({ message: "welding_start" })
-      );
-    }
-    if (clients) {
-      clients.forEach((client) => {
-        if (client.path === "ui") {
-          wsServer.sendWSClient(
-            client,
-            JSON.stringify({ message: "sfm_complete" })
-          );
-        }
-      });
-    }
-  });
   httpServer.weldingStartEndpoint((req, res) => {
     if (wsServer.robotClient) {
       wsServer.sendWSClient(
@@ -148,14 +131,12 @@ function runMe() {
         if (client.path === "ui") {
           wsServer.sendWSClient(
             client,
-            JSON.stringify({ message: "sfm_complete" })
+            JSON.stringify({ message: "wsd_complete" })
           );
         }
       });
     }
   });
-
-
 
   logger.success(`WebSocket server initialized, port: ${wsProperties.port}`);
   logger.success(`HTTP server initialized, port: ${httpProperties.port}`);
