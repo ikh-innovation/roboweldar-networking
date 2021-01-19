@@ -49,6 +49,7 @@ export default class Application extends React.Component {
 
     properties.wsCli.overloadOnMessage((message) => {
       const parsed = JSON.parse(message.data);
+      // console.log(parsed);
       if (parsed.message === "pc_start") {
       }
       if (parsed.message === "pc_complete") {
@@ -61,9 +62,11 @@ export default class Application extends React.Component {
         // TODO: execute code after weld seam detection is complete
         this.setState({ wsdStatus: 100 });
       }
-      if (parsed.pcStatus) this.setState({ pcStatus: parsed.pcStatus });
-      if (parsed.sfmStatus) this.setState({ sfmStatus: parsed.sfmStatus });
-      if (parsed.wsdStatus) this.setState({ wsdStatus: parsed.wsdStatus });
+      if (parsed.pcStatus) this.setState({ pcPercentageProgress: parsed.pcStatus });
+      if (parsed.sfmStatus) {
+        this.setState({ sfmPercentageProgress: parsed.sfmStatus });
+      }
+      if (parsed.wsdStatus) this.setState({ wsdPercentageProgress: parsed.wsdStatus });
     });
   }
 
@@ -243,7 +246,7 @@ export default class Application extends React.Component {
           align="center"
           style={typoStyle}
         >
-          { text }
+          {text}
           <span style={{ color: "red" }}> {percentageProgress}% </span>
         </Typography>
         <LinearProgress
@@ -256,7 +259,6 @@ export default class Application extends React.Component {
     );
   }
 
-
   loading3DReconstructionBars() {
     const barsWrapper = {
       marginTop: "2em",
@@ -265,8 +267,16 @@ export default class Application extends React.Component {
 
     return (
       <div style={barsWrapper}>
-        {this.genericLoadingBar("Photo Capture", "pcLoadingBar", this.state.pcPercentageProgress)}
-        {this.genericLoadingBar("Structure from Motion", "sfmLoadingBar", this.state.sfmPercentageProgress)}
+        {this.genericLoadingBar(
+          "Photo Capture",
+          "pcLoadingBar",
+          this.state.pcPercentageProgress
+        )}
+        {this.genericLoadingBar(
+          "Structure from Motion",
+          "sfmLoadingBar",
+          this.state.sfmPercentageProgress
+        )}
       </div>
     );
   }
@@ -277,7 +287,15 @@ export default class Application extends React.Component {
       marginBottom: "2em",
     };
 
-    return <div style={barsWrapper}>{this.genericLoadingBar("Weld Seam Detection", "wsdLoadingBar", this.state.wsdPercentageProgress)}</div>;
+    return (
+      <div style={barsWrapper}>
+        {this.genericLoadingBar(
+          "Weld Seam Detection",
+          "wsdLoadingBar",
+          this.state.wsdPercentageProgress
+        )}
+      </div>
+    );
   }
 
   sendPCStartSignal(hostname) {
@@ -338,18 +356,16 @@ export default class Application extends React.Component {
             />
           </Tabs>
         </AppBar>
-        
+
         {this.tabPanel3DReconstruction({
           hostname: this.hostname,
           value: 0,
         })}
 
-{this.tabPanelWeldSeamDetection({
+        {this.tabPanelWeldSeamDetection({
           hostname: this.hostname,
           value: 1,
         })}
-        
-        
       </div>
     );
   }

@@ -12,7 +12,7 @@
 # TODO: Add template for using cache_trajectory
 
 import os
-import ws_client, http_client, json, sys, threading, time
+import ws_client, http_client, json, sys, threading, time, random
 
 httpPort = "3000"
 wsPort = "3001"
@@ -27,10 +27,7 @@ def connectWS(endpoint, host):
     time.sleep(2)
     try:
         while (running):
-            if (endpoint == 'sfm'):
-                val = 5
-            else:
-                val = 15
+            val = int(random.random()*100)
             message = json.dumps({'status': val})
             ws_client.send_message(wsClient, message)
             time.sleep(1)
