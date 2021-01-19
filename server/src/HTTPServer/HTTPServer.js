@@ -48,6 +48,7 @@ export class HTTPServer {
       else res.json({ message: "file not found" });
     });
   }
+  // TODO: Implement serve_trajectory_files
 
   initFileStorage(imagesPath, meshPath, weldingtrajPath) {
     // returns a StorageEngine instance configured to store files on the local file system.
