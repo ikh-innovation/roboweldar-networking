@@ -16,6 +16,7 @@ def send_files(host, file_path_array):
 
 def get_filenames(link):
     r = requests.get(link)
+    print("satus code: ",r.status_code)
     if (r.status_code == 200):
         names = json.loads(r.text)
         return names
