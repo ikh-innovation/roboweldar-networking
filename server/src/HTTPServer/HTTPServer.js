@@ -29,7 +29,7 @@ export class HTTPServer {
     this.server.use("/mesh", express.static(meshPath));
     this.server.use("/welding_trajectory", express.static(weldingtrajPath));
     this.imageServingEndpoint(imagePath);
-    this.meshServingEndpoint(meshPath);\
+    this.meshServingEndpoint(meshPath);
     this.weldingTrajectoryServingEndpoint(weldingtrajPath);
 
   }
