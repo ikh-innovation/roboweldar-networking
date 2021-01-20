@@ -17,6 +17,7 @@ export class HTTPServer {
   initFiles(imagesPath, meshPath, weldingtrajPath) {
     this.imageNamesServingEndpoint();
     this.meshFilesServingEndpoint();
+    this.weldingTrajectoryFilesServingEndpoint();
 
     this.initFileStorage(imagesPath, meshPath, weldingtrajPath);
 
