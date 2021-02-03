@@ -38,14 +38,14 @@ def connectWS(endpoint, host):
 
 # endpoint either 'cache_images'
 # or 'cache_mesh'
-def send_dummy_files(endpoint, host):
+def send_dummy_files(endpoint, host, path_to_files):
     # dummy data, files with those names should exist in this dir
     if endpoint == 'cache_images':
-        filesNames = os.listdir('./images')
-        files = map(lambda fileName: './images/' + fileName, filesNames)
+        filesNames = os.listdir(path_to_files)
+        files = map(lambda fileName: path_to_files + fileName, filesNames)
     elif endpoint == 'cache_mesh':
-        filesNames = os.listdir('./mesh')
-        files = map(lambda fileName: './mesh/' + fileName, filesNames)
+        filesNames = os.listdir(path_to_files)
+        files = map(lambda fileName: path_to_files + fileName, filesNames)
     http_client.send_files('http://' + host + ':' + httpPort + '/' + endpoint, files)
 
 
@@ -116,7 +116,7 @@ def get_trajectory_file(host, httpPort, path_to_dir, trajectory_file_name):
 
 
 def runMe():
-    if len(sys.argv) < 4:
+    if len(sys.argv) < 5:
         print("wrong number of arguments")
         return
     host = sys.argv[1]
@@ -125,7 +125,8 @@ def runMe():
         connectWS(this_module_header, host)
     elif sys.argv[2] == 'http':
         this_module_file_endpoint = sys.argv[3]
-        send_dummy_files(this_module_file_endpoint, host)
+        path_to_files = sys.argv[4]
+        send_dummy_files(this_module_file_endpoint, host, path_to_files)
 
 
 if __name__ == '__main__':
