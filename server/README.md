@@ -10,6 +10,11 @@
 
 - `src/Config/index.js`  
 
+# Docker 
+
+`docker build . --tag roboweldar-networking-server`
+
+`docker run -it roboweldar-networking-server yarn start`
 
 # Notes
 
