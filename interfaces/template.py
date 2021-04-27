@@ -42,7 +42,7 @@ def send_dummy_files(endpoint, host, path_to_files):
     # dummy data, files with those names should exist in this dir
     if endpoint == 'cache_images':
         filesNames = os.listdir(path_to_files)
-        files = map(lambda fileName: path_to_files + fileName, filesNames)
+        files = map(lambda fileName: path_to_files + "/" + fileName, filesNames)
     elif endpoint == 'cache_mesh':
         filesNames = os.listdir(path_to_files)
         files = map(lambda fileName: path_to_files + fileName, filesNames)
